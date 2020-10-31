@@ -25,3 +25,30 @@ reserved = {
 }
 
 
+tokens = tuple(reserved.values()) + (
+    'ID',
+    'INTEGERNUMBER',
+    'FLOATNUMBER',
+    'ASSIGN',
+    'SUM',
+    'SUB',
+    'MUL',
+    'DIV',
+    'MOD',
+    'GT',
+    'GE',
+    'LT',
+    'LE',
+    'EQ',
+    'NE',
+    'LCB',
+    'RCB',
+    'LRB',
+    'RRB',
+    'LSB',
+    'RSB',
+    'SEMICOLON',
+    'COLON',
+    'COMMA',
+    'ERROR!'
+)
