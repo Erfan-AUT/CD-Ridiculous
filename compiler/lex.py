@@ -53,6 +53,11 @@ tokens = tuple(reserved.values()) + (
     'ERROR'
 )
 
+t_ignore = ' \t'
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
