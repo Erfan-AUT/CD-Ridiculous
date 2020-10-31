@@ -2,8 +2,8 @@ from compiler import lexer
 
 
 data = '''
-False True Erfan Shayan
-if else
+false true erfan shayan
+if else 00011.120000
 '''
 
 
