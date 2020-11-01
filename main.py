@@ -3,7 +3,7 @@ from compiler import lexer
 
 data = '''
 false true erfan shayan
-if else 00011.120000
+if else + 00011.120000 +-/* 12 14 15 + - - / * / 
 '''
 
 

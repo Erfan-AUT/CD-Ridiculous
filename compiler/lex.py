@@ -55,6 +55,10 @@ tokens = tuple(reserved.values()) + (
 
 t_ignore = ' \t'
 
+def t_operator_error(t):
+    r'([\s]?[\+\-\*/%][\s]?[\+\-\*/%])+'
+    return t_error(t)
+
 # Regular expression rules for simple tokens
 t_ASSIGN    = r'\='
 t_SUM       = r'\+'
@@ -88,24 +92,21 @@ def t_ID(t):
     t.type = reserved.get(t.value, 'ID')    # Check for reserved words
     return t
 
-def t_INTEGERNUMBER(t):
-    r'[0-9]{1,10}$'
-    t.value = int(t.value)
-    return t
-
 def t_FLOATNUMBER(t):
-    r'[0-9]{1,10}[.][0-9]*$'
+    r'[0-9]{1,10}[.][0-9]*'
     parsed = t.value.split('.')
     num, fraction_raw = parsed[0], parsed[1]
     fraction = str(int(fraction_raw[::-1]))[::-1]
     t.value = int(num) + int(fraction) / (10 ** len(fraction))
     return t
 
-def t_error(t):
-    raise Exception('Error at', t.value)
+def t_INTEGERNUMBER(t):
+    r'[0-9]{1,10}'
+    t.value = int(t.value)
+    return t
 
-# def build(self, **kwargs):
-#     self.lexer = lex.lex(module=self, **kwargs)
-#     return self.lexer     
+def t_error(t):
+    print('ERROR')
+    # raise Exception('Error at', t.value)   
 
 lexer = lex.lex()
