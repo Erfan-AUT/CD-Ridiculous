@@ -87,6 +87,14 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
+def t_badfloat_1(t):
+    r'([0-9]+\.){2,}[0-9]+'
+    return t_error(t)
+
+def t_badfloat_2(t):
+    r'([0-9]+\.{2,}[0-9]*)'
+    return t_error(t)
+
 def t_FLOATNUMBER(t):
     r'[0-9]+[.][0-9]*'
     parsed = t.value.split('.')
@@ -97,26 +105,25 @@ def t_FLOATNUMBER(t):
     t.value = int(num) + int(fraction) / (10 ** len(fraction))
     return t
 
-def t_INTEGERNUMBER(t):
-    r'[0-9]+(?![a-zA-Z])'
-    if len(t.value) >= 10:
-        return t_error(t)
-    t.value = int(t.value)
-    return t
 
 def t_ID(t):
-    r'[a-zA-Z0-9_][a-zA-Z_0-9]*'
+    r'([a-zA-Z_][a-zA-Z_0-9]*)|([0-9]+[a-zA-Z]+)'
     t.type = reserved.get(t.value)    # Check for reserved words
     if not t.type and (t.value[0].isupper() or t.value[0].isnumeric()):
         return t_error(t)
     t.type = 'ID'
     return t
 
-def t_doterror(t):
-    r'[.][^\s]+'
-    return t_error(t)
+def t_INTEGERNUMBER(t):
+    r'[0-9]+(?![\.a-zA-Z])'
+    if len(t.value) >= 10:
+        return t_error(t)
+    t.value = int(t.value)
+    return t
+
 
 def t_error(t):
     print('ERROR')
     # raise Exception('Error at', t.value)   
+
 lexer = lex.lex()
