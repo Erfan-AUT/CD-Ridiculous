@@ -56,7 +56,7 @@ tokens = tuple(reserved.values()) + (
 t_ignore = ' \t'
 
 def t_operator_error(t):
-    r'([\s]?[\+\-\*/%][\s]?[\+\-\*/%])+'
+    r'([\s]*[\+\-\*\/%]){2,}'
     return t_error(t)
 
 # Regular expression rules for simple tokens
@@ -87,26 +87,36 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-def t_ID(t):
-    r'[a-z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value, 'ID')    # Check for reserved words
-    return t
-
 def t_FLOATNUMBER(t):
-    r'[0-9]{1,10}[.][0-9]*'
+    r'[0-9]+[.][0-9]*'
     parsed = t.value.split('.')
     num, fraction_raw = parsed[0], parsed[1]
+    if len(num) >= 10 or len(parsed) > 2:
+        return t_error(t)
     fraction = str(int(fraction_raw[::-1]))[::-1]
     t.value = int(num) + int(fraction) / (10 ** len(fraction))
     return t
 
 def t_INTEGERNUMBER(t):
-    r'[0-9]{1,10}'
+    r'[0-9]+(?![a-zA-Z])'
+    if len(t.value) >= 10:
+        return t_error(t)
     t.value = int(t.value)
     return t
+
+def t_ID(t):
+    r'[a-zA-Z0-9_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value)    # Check for reserved words
+    if not t.type and (t.value[0].isupper() or t.value[0].isnumeric()):
+        return t_error(t)
+    t.type = 'ID'
+    return t
+
+def t_doterror(t):
+    r'[.][^\s]+'
+    return t_error(t)
 
 def t_error(t):
     print('ERROR')
     # raise Exception('Error at', t.value)   
-
 lexer = lex.lex()
