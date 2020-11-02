@@ -107,7 +107,7 @@ def t_FLOATNUMBER(t):
 
 
 def t_ID(t):
-    r'([a-zA-Z_][a-zA-Z_0-9]*)|([0-9]+[a-zA-Z]+)'
+    r'([a-zA-Z_][a-zA-Z_0-9]*)|([0-9]+[a-zA-Z_]+)'
     t.type = reserved.get(t.value)    # Check for reserved words
     if t.type:
         return t
