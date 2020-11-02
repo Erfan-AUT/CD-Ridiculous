@@ -5,7 +5,7 @@ reserved = {
     'int':      'INTEGER',
     'float':    'FLOAT',
     'bool':     'BOOLEAN',
-    'function': 'FUNCTION',
+    'fun':      'FUNCTION',
     'True':     'TRUE',
     'False':    'FALSE',
     'print':    'PRINT',
@@ -109,7 +109,9 @@ def t_FLOATNUMBER(t):
 def t_ID(t):
     r'([a-zA-Z_][a-zA-Z_0-9]*)|([0-9]+[a-zA-Z]+)'
     t.type = reserved.get(t.value)    # Check for reserved words
-    if not t.type and (t.value[0].isupper() or t.value[0].isnumeric()):
+    if t.type:
+        return t
+    if (t.value[0].isupper() or t.value[0].isnumeric()):
         return t_error(t)
     t.type = 'ID'
     return t
