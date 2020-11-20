@@ -30,7 +30,7 @@ def p_dec(p):
 
 
 def p_vardec(p):
-    "vardec : idlist COLON type"
+    "vardec : idlist COLON type SEMICOLON"
     print("p_vardec")
 
 
@@ -142,8 +142,8 @@ def p_relop(p):
 
 def p_exp(p):
     """exp : lvalue ASSIGN exp
-    | exp operator exp
-    | exp relop exp
+    | exp operator exp %prec AND
+    | exp relop exp %prec LT
     | const
     | lvalue
     | ID LRB explist RRB
