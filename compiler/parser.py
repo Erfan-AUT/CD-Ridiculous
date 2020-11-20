@@ -130,12 +130,6 @@ def p_elseiflist(p):
     print("p_elseiflist")
 
 
-def p_relopexp(p):
-    """relopexp : exp relop exp
-    | relopexp relop exp"""
-    print("p_relopexp")
-
-
 def p_relop(p):
     """relop : GT
     | GE
@@ -149,12 +143,11 @@ def p_relop(p):
 def p_exp(p):
     """exp : lvalue ASSIGN exp
     | exp operator exp
-    | relopexp
+    | exp relop exp
     | const
     | lvalue
     | ID LRB explist RRB
     | LRB exp RRB
-    | lvalue LRB RRB
     | SUB exp
     | NOT exp"""
     print("p_operator")
@@ -181,7 +174,8 @@ def p_const(p):
 
 def p_explist(p):
     """explist : exp
-    | explist COMMA exp"""
+    | explist COMMA exp
+    | eps"""
     print("p_explist")
 
 
