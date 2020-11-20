@@ -1,6 +1,5 @@
 from ply import lex
 
-
 reserved = {
     'int':      'INTEGER',
     'float':    'FLOAT',

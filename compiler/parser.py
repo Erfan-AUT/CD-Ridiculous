@@ -1,38 +1,50 @@
-from lex import tokens
+from ply.yacc import yacc
+from .lex import tokens
 
 precedence = (
-        ('left', 'AND', 'OR'),
-        ('left', 'NOT'),
-        ('left', 'LT', 'LE', 'GT', 'GE', 'EQ', 'NE'),
-        ('right', 'ASSIGN')
-        ("left", "SUM", "SUB"),
-        ("left", "MUL", "DIV", "MOD"),
-    )
+    ("left", "AND", "OR"),
+    ("left", "NOT"),
+    ("left", "LT", "LE", "GT", "GE", "EQ", "NE"),
+    ("right", "ASSIGN"),
+    ("left", "SUM", "SUB"),
+    ("left", "MUL", "DIV", "MOD"),
+)
 
 
 def p_program(p):
     "program : declist MAIN LRB RRB block"
-    print('p_program')
+    print("p_program")
 
 
 def p_declist(p):
     # "declist -> dec" is redundant
     """declist : declist dec
-    | eps""" # eps is equal to epsilon
-    print('p_declist')
+    | eps"""  # eps is equal to epsilon
+    print("p_declist")
 
 
 def p_dec(p):
     """dec : vardec
     | funcdec"""
-    print('p_dec')
+    print("p_dec")
+
+
+def p_vardec(p):
+    "vardec : idlist COLON type"
+    print("p_vardec")
+
+
+def p_funcdec(p):
+    """funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
+    | FUNCTION ID LRB paramdecs RRB block"""
+    print("p_funcdec")
 
 
 def p_type(p):
     """type : INTEGER
     | FLOAT
     | BOOLEAN"""
-    print('p_type')
+    print("p_type")
 
 
 def p_iddec(p):
@@ -49,17 +61,6 @@ def p_idlist(p):
     print("p_idlist")
 
 
-def p_vardec(p):
-    "vardec : idlist SEMICOLON type"
-    print("p_vardec")
-
-
-def p_funcdec(p):
-    """funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
-    | FUNCTION ID LRB paramdecs RRB block"""
-    print("p_funcdec")
-
-
 def p_paramdecs(p):
     """paramdecs : paramdecslist
     | eps"""
@@ -67,7 +68,7 @@ def p_paramdecs(p):
 
 
 def p_paramdecslist(p):
-    """paramdecslist : paramdec 
+    """paramdecslist : paramdec
     | paramdecslist COMMA paramdec
     """
     print("p_paramdecslist")
@@ -75,7 +76,7 @@ def p_paramdecslist(p):
 
 def p_paramdec(p):
     """paramdec : ID COLON type
-    | id LSB RSB COLON type"""
+    | ID LSB RSB COLON type"""
     print("p_paramdec")
 
 
@@ -148,7 +149,7 @@ def p_relop(p):
 def p_exp(p):
     """exp : lvalue ASSIGN exp
     | exp operator exp
-    | reopexp
+    | relopexp
     | const
     | lvalue
     | ID LRB explist RRB
@@ -184,7 +185,16 @@ def p_explist(p):
     print("p_explist")
 
 
-def p_empty(p):
-    "empty :"
-    print("p_empty")
-    pass
+def p_eps(p):
+    "eps :"
+    print("p_eps")
+    # pass
+
+
+def p_error(p):
+    # print(p.value)
+    if p:
+        raise Exception("ParsingError: invalid grammar at ", p)
+
+
+parser = yacc()
