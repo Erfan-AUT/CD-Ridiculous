@@ -110,24 +110,44 @@ def p_cases(p):
 
 
 def p_stmt(p):
-    """stmt : RETURN exp SEMICOLON
-    | exp SEMICOLON
-    | block
-    | vardec
-    | WHILE LRB exp LRB stmt
-    | ON LRB exp RRB LCB cases RCB SEMICOLON
-    | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB stmt
-    | FOR LRB ID IN RRB stmt
-    | IF LRB exp RRB stmt elseiflist
-    | IF LRB exp RRB stmt elseiflist ELSE stmt
-    | PRINT LRB ID RRB SEMICOLON"""
+    """stmt : ostmt
+    | cstmt"""
     print("p_stmt")
 
 
+def p_ostmt(p):
+    """ostmt : IF LRB exp RRB simple
+    | IF LRB exp RRB ostmt
+    | IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    | FOR LRB ID IN RRB ostmt
+    | WHILE LRB exp LRB ostmt
+    """
+
+
+def p_cstmt(p):
+    """cstmt : simple
+    | IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    | FOR LRB ID IN RRB cstmt
+    | WHILE LRB exp LRB cstmt
+    """
+
+
 def p_elseiflist(p):
-    """elseiflist : elseiflist ELSEIF LRB exp RRB stmt
+    """elseiflist : elseiflist ELSEIF LRB exp RRB cstmt
     | eps"""
     print("p_elseiflist")
+
+
+def p_simple(p):
+    """simple : RETURN exp SEMICOLON
+    | exp SEMICOLON
+    | block
+    | vardec
+    | ON LRB exp RRB LCB cases RCB SEMICOLON
+    | PRINT LRB ID RRB SEMICOLON"""
+    print("p_stmt")
 
 
 def p_relop(p):
