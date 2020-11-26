@@ -39,7 +39,7 @@ Rule 29    cases -> cases case
 Rule 30    cases -> eps
 Rule 31    stmt -> ostmt
 Rule 32    stmt -> cstmt
-Rule 33    ostmt -> IF LRB exp RRB simple
+Rule 33    ostmt -> IF LRB exp RRB cstmt
 Rule 34    ostmt -> IF LRB exp RRB ostmt
 Rule 35    ostmt -> IF LRB exp RRB cstmt elseiflist ELSE ostmt
 Rule 36    ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -143,7 +143,7 @@ block                : 1 7 8 48
 case                 : 29
 cases                : 29 50
 const                : 28 61
-cstmt                : 32 35 40 40 41 42 43 44
+cstmt                : 32 33 35 40 40 41 42 43 44
 dec                  : 2
 declist              : 1 2
 elseiflist           : 35 40 44
@@ -161,7 +161,7 @@ paramdecs            : 7 8
 paramdecslist        : 16 19
 program              : 0
 relop                : 60
-simple               : 33 39
+simple               : 39
 stmt                 : 23
 stmtlist             : 22 23 28
 type                 : 6 7 20 21
@@ -974,9 +974,9 @@ state 43
     FLOATNUMBER     reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
     TRUE            reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
     FALSE           reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
-    WHERE           reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
     ELSE            reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
     ELSEIF          reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
+    WHERE           reduce using rule 6 (vardec -> idlist COLON type SEMICOLON .)
 
 
 state 44
@@ -1533,7 +1533,7 @@ state 71
     (23) stmtlist -> stmtlist . stmt
     (31) stmt -> . ostmt
     (32) stmt -> . cstmt
-    (33) ostmt -> . IF LRB exp RRB simple
+    (33) ostmt -> . IF LRB exp RRB cstmt
     (34) ostmt -> . IF LRB exp RRB ostmt
     (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
     (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -1574,8 +1574,8 @@ state 71
 
     RCB             shift and go to state 82
     IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
+    FOR             shift and go to state 88
+    WHILE           shift and go to state 89
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -1593,7 +1593,7 @@ state 71
     ostmt                          shift and go to state 84
     cstmt                          shift and go to state 85
     exp                            shift and go to state 87
-    simple                         shift and go to state 88
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -1915,9 +1915,9 @@ state 82
     FALSE           reduce using rule 22 (block -> LCB stmtlist RCB .)
     MAIN            reduce using rule 22 (block -> LCB stmtlist RCB .)
     FUNCTION        reduce using rule 22 (block -> LCB stmtlist RCB .)
-    WHERE           reduce using rule 22 (block -> LCB stmtlist RCB .)
     ELSE            reduce using rule 22 (block -> LCB stmtlist RCB .)
     ELSEIF          reduce using rule 22 (block -> LCB stmtlist RCB .)
+    WHERE           reduce using rule 22 (block -> LCB stmtlist RCB .)
 
 
 state 83
@@ -1991,7 +1991,7 @@ state 85
 
 state 86
 
-    (33) ostmt -> IF . LRB exp RRB simple
+    (33) ostmt -> IF . LRB exp RRB cstmt
     (34) ostmt -> IF . LRB exp RRB ostmt
     (35) ostmt -> IF . LRB exp RRB cstmt elseiflist ELSE ostmt
     (40) cstmt -> IF . LRB exp RRB cstmt elseiflist ELSE cstmt
@@ -2038,6 +2038,24 @@ state 87
 
 state 88
 
+    (36) ostmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> FOR . LRB ID IN ID RRB ostmt
+    (41) cstmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> FOR . LRB ID IN ID RRB cstmt
+
+    LRB             shift and go to state 104
+
+
+state 89
+
+    (38) ostmt -> WHILE . LRB exp RRB ostmt
+    (43) cstmt -> WHILE . LRB exp RRB cstmt
+
+    LRB             shift and go to state 105
+
+
+state 90
+
     (39) cstmt -> simple .
 
     RCB             reduce using rule 39 (cstmt -> simple .)
@@ -2059,24 +2077,6 @@ state 88
     ELSE            reduce using rule 39 (cstmt -> simple .)
     ELSEIF          reduce using rule 39 (cstmt -> simple .)
     WHERE           reduce using rule 39 (cstmt -> simple .)
-
-
-state 89
-
-    (36) ostmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
-    (37) ostmt -> FOR . LRB ID IN ID RRB ostmt
-    (41) cstmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
-    (42) cstmt -> FOR . LRB ID IN ID RRB cstmt
-
-    LRB             shift and go to state 104
-
-
-state 90
-
-    (38) ostmt -> WHILE . LRB exp RRB ostmt
-    (43) cstmt -> WHILE . LRB exp RRB cstmt
-
-    LRB             shift and go to state 105
 
 
 state 91
@@ -2131,9 +2131,9 @@ state 92
     FLOATNUMBER     reduce using rule 48 (simple -> block .)
     TRUE            reduce using rule 48 (simple -> block .)
     FALSE           reduce using rule 48 (simple -> block .)
-    WHERE           reduce using rule 48 (simple -> block .)
     ELSE            reduce using rule 48 (simple -> block .)
     ELSEIF          reduce using rule 48 (simple -> block .)
+    WHERE           reduce using rule 48 (simple -> block .)
 
 
 state 93
@@ -2156,9 +2156,9 @@ state 93
     FLOATNUMBER     reduce using rule 49 (simple -> vardec .)
     TRUE            reduce using rule 49 (simple -> vardec .)
     FALSE           reduce using rule 49 (simple -> vardec .)
-    WHERE           reduce using rule 49 (simple -> vardec .)
     ELSE            reduce using rule 49 (simple -> vardec .)
     ELSEIF          reduce using rule 49 (simple -> vardec .)
+    WHERE           reduce using rule 49 (simple -> vardec .)
 
 
 state 94
@@ -2248,7 +2248,7 @@ state 101
 
 state 102
 
-    (33) ostmt -> IF LRB . exp RRB simple
+    (33) ostmt -> IF LRB . exp RRB cstmt
     (34) ostmt -> IF LRB . exp RRB ostmt
     (35) ostmt -> IF LRB . exp RRB cstmt elseiflist ELSE ostmt
     (40) cstmt -> IF LRB . exp RRB cstmt elseiflist ELSE cstmt
@@ -2301,9 +2301,9 @@ state 103
     FLOATNUMBER     reduce using rule 47 (simple -> exp SEMICOLON .)
     TRUE            reduce using rule 47 (simple -> exp SEMICOLON .)
     FALSE           reduce using rule 47 (simple -> exp SEMICOLON .)
-    WHERE           reduce using rule 47 (simple -> exp SEMICOLON .)
     ELSE            reduce using rule 47 (simple -> exp SEMICOLON .)
     ELSEIF          reduce using rule 47 (simple -> exp SEMICOLON .)
+    WHERE           reduce using rule 47 (simple -> exp SEMICOLON .)
 
 
 state 104
@@ -2507,7 +2507,7 @@ state 111
 
 state 112
 
-    (33) ostmt -> IF LRB exp . RRB simple
+    (33) ostmt -> IF LRB exp . RRB cstmt
     (34) ostmt -> IF LRB exp . RRB ostmt
     (35) ostmt -> IF LRB exp . RRB cstmt elseiflist ELSE ostmt
     (40) cstmt -> IF LRB exp . RRB cstmt elseiflist ELSE cstmt
@@ -2669,9 +2669,9 @@ state 116
     FLOATNUMBER     reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
     TRUE            reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
     FALSE           reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
-    WHERE           reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
     ELSE            reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
     ELSEIF          reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
+    WHERE           reduce using rule 46 (simple -> RETURN exp SEMICOLON .)
 
 
 state 117
@@ -2791,27 +2791,27 @@ state 121
 
 state 122
 
-    (33) ostmt -> IF LRB exp RRB . simple
+    (33) ostmt -> IF LRB exp RRB . cstmt
     (34) ostmt -> IF LRB exp RRB . ostmt
     (35) ostmt -> IF LRB exp RRB . cstmt elseiflist ELSE ostmt
     (40) cstmt -> IF LRB exp RRB . cstmt elseiflist ELSE cstmt
+    (39) cstmt -> . simple
+    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
+    (43) cstmt -> . WHILE LRB exp RRB cstmt
+    (33) ostmt -> . IF LRB exp RRB cstmt
+    (34) ostmt -> . IF LRB exp RRB ostmt
+    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
+    (38) ostmt -> . WHILE LRB exp RRB ostmt
     (46) simple -> . RETURN exp SEMICOLON
     (47) simple -> . exp SEMICOLON
     (48) simple -> . block
     (49) simple -> . vardec
     (50) simple -> . ON LRB exp RRB LCB cases RCB SEMICOLON
     (51) simple -> . PRINT LRB ID RRB SEMICOLON
-    (33) ostmt -> . IF LRB exp RRB simple
-    (34) ostmt -> . IF LRB exp RRB ostmt
-    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
-    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
-    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
-    (38) ostmt -> . WHILE LRB exp RRB ostmt
-    (39) cstmt -> . simple
-    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
-    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
-    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
-    (43) cstmt -> . WHILE LRB exp RRB cstmt
     (58) exp -> . lvalue ASSIGN exp
     (59) exp -> . exp operator exp
     (60) exp -> . exp relop exp
@@ -2834,12 +2834,12 @@ state 122
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
+    IF              shift and go to state 128
+    FOR             shift and go to state 131
+    WHILE           shift and go to state 132
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
-    IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
     LRB             shift and go to state 30
     SUB             shift and go to state 31
     NOT             shift and go to state 32
@@ -2851,9 +2851,9 @@ state 122
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    simple                         shift and go to state 128
-    ostmt                          shift and go to state 129
-    cstmt                          shift and go to state 130
+    cstmt                          shift and go to state 129
+    ostmt                          shift and go to state 130
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -2890,7 +2890,7 @@ state 123
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 131
+    exp                            shift and go to state 133
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
@@ -2899,14 +2899,14 @@ state 124
     (37) ostmt -> FOR LRB ID IN . ID RRB ostmt
     (42) cstmt -> FOR LRB ID IN . ID RRB cstmt
 
-    ID              shift and go to state 132
+    ID              shift and go to state 134
 
 
 state 125
 
     (38) ostmt -> WHILE LRB exp RRB . ostmt
     (43) cstmt -> WHILE LRB exp RRB . cstmt
-    (33) ostmt -> . IF LRB exp RRB simple
+    (33) ostmt -> . IF LRB exp RRB cstmt
     (34) ostmt -> . IF LRB exp RRB ostmt
     (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
     (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -2946,8 +2946,8 @@ state 125
     (13) iddec -> . lvalue ASSIGN exp
 
     IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
+    FOR             shift and go to state 88
+    WHILE           shift and go to state 89
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -2962,9 +2962,9 @@ state 125
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    ostmt                          shift and go to state 133
-    cstmt                          shift and go to state 134
-    simple                         shift and go to state 88
+    ostmt                          shift and go to state 135
+    cstmt                          shift and go to state 136
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -2976,43 +2976,59 @@ state 126
 
     (50) simple -> ON LRB exp RRB . LCB cases RCB SEMICOLON
 
-    LCB             shift and go to state 135
+    LCB             shift and go to state 137
 
 
 state 127
 
     (51) simple -> PRINT LRB ID RRB . SEMICOLON
 
-    SEMICOLON       shift and go to state 136
+    SEMICOLON       shift and go to state 138
 
 
 state 128
 
-    (33) ostmt -> IF LRB exp RRB simple .
-    (39) cstmt -> simple .
+    (40) cstmt -> IF . LRB exp RRB cstmt elseiflist ELSE cstmt
+    (33) ostmt -> IF . LRB exp RRB cstmt
+    (34) ostmt -> IF . LRB exp RRB ostmt
+    (35) ostmt -> IF . LRB exp RRB cstmt elseiflist ELSE ostmt
 
-    RCB             reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    IF              reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    FOR             reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    WHILE           reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    RETURN          reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    ON              reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    PRINT           reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    LRB             reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    SUB             reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    NOT             reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    LCB             reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    ID              reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    INTEGERNUMBER   reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    FLOATNUMBER     reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    TRUE            reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    FALSE           reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    WHERE           reduce using rule 33 (ostmt -> IF LRB exp RRB simple .)
-    ELSE            reduce using rule 39 (cstmt -> simple .)
-    ELSEIF          reduce using rule 39 (cstmt -> simple .)
+    LRB             shift and go to state 139
 
 
 state 129
+
+    (33) ostmt -> IF LRB exp RRB cstmt .
+    (35) ostmt -> IF LRB exp RRB cstmt . elseiflist ELSE ostmt
+    (40) cstmt -> IF LRB exp RRB cstmt . elseiflist ELSE cstmt
+    (44) elseiflist -> . elseiflist ELSEIF LRB exp RRB cstmt
+    (45) elseiflist -> . eps
+    (80) eps -> .
+
+    RCB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    IF              reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    FOR             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    WHILE           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    RETURN          reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    ON              reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    PRINT           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    LRB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    SUB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    NOT             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    LCB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    ID              reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    INTEGERNUMBER   reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    FLOATNUMBER     reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    TRUE            reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    FALSE           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    WHERE           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    ELSE            reduce using rule 80 (eps -> .)
+    ELSEIF          reduce using rule 80 (eps -> .)
+
+    elseiflist                     shift and go to state 140
+    eps                            shift and go to state 141
+
+state 130
 
     (34) ostmt -> IF LRB exp RRB ostmt .
 
@@ -3035,21 +3051,25 @@ state 129
     WHERE           reduce using rule 34 (ostmt -> IF LRB exp RRB ostmt .)
 
 
-state 130
-
-    (35) ostmt -> IF LRB exp RRB cstmt . elseiflist ELSE ostmt
-    (40) cstmt -> IF LRB exp RRB cstmt . elseiflist ELSE cstmt
-    (44) elseiflist -> . elseiflist ELSEIF LRB exp RRB cstmt
-    (45) elseiflist -> . eps
-    (80) eps -> .
-
-    ELSE            reduce using rule 80 (eps -> .)
-    ELSEIF          reduce using rule 80 (eps -> .)
-
-    elseiflist                     shift and go to state 137
-    eps                            shift and go to state 138
-
 state 131
+
+    (41) cstmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> FOR . LRB ID IN ID RRB cstmt
+    (36) ostmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> FOR . LRB ID IN ID RRB ostmt
+
+    LRB             shift and go to state 142
+
+
+state 132
+
+    (43) cstmt -> WHILE . LRB exp RRB cstmt
+    (38) ostmt -> WHILE . LRB exp RRB ostmt
+
+    LRB             shift and go to state 143
+
+
+state 133
 
     (36) ostmt -> FOR LRB exp SEMICOLON exp . SEMICOLON exp RRB ostmt
     (41) cstmt -> FOR LRB exp SEMICOLON exp . SEMICOLON exp RRB cstmt
@@ -3069,7 +3089,7 @@ state 131
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    SEMICOLON       shift and go to state 139
+    SEMICOLON       shift and go to state 144
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -3087,15 +3107,15 @@ state 131
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 132
+state 134
 
     (37) ostmt -> FOR LRB ID IN ID . RRB ostmt
     (42) cstmt -> FOR LRB ID IN ID . RRB cstmt
 
-    RRB             shift and go to state 140
+    RRB             shift and go to state 145
 
 
-state 133
+state 135
 
     (38) ostmt -> WHILE LRB exp RRB ostmt .
 
@@ -3118,7 +3138,7 @@ state 133
     WHERE           reduce using rule 38 (ostmt -> WHILE LRB exp RRB ostmt .)
 
 
-state 134
+state 136
 
     (43) cstmt -> WHILE LRB exp RRB cstmt .
 
@@ -3143,7 +3163,7 @@ state 134
     WHERE           reduce using rule 43 (cstmt -> WHILE LRB exp RRB cstmt .)
 
 
-state 135
+state 137
 
     (50) simple -> ON LRB exp RRB LCB . cases RCB SEMICOLON
     (29) cases -> . cases case
@@ -3153,10 +3173,10 @@ state 135
     RCB             reduce using rule 80 (eps -> .)
     WHERE           reduce using rule 80 (eps -> .)
 
-    cases                          shift and go to state 141
-    eps                            shift and go to state 142
+    cases                          shift and go to state 146
+    eps                            shift and go to state 147
 
-state 136
+state 138
 
     (51) simple -> PRINT LRB ID RRB SEMICOLON .
 
@@ -3176,22 +3196,57 @@ state 136
     FLOATNUMBER     reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
     TRUE            reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
     FALSE           reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
-    WHERE           reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
     ELSE            reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
     ELSEIF          reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
+    WHERE           reduce using rule 51 (simple -> PRINT LRB ID RRB SEMICOLON .)
 
 
-state 137
+state 139
+
+    (40) cstmt -> IF LRB . exp RRB cstmt elseiflist ELSE cstmt
+    (33) ostmt -> IF LRB . exp RRB cstmt
+    (34) ostmt -> IF LRB . exp RRB ostmt
+    (35) ostmt -> IF LRB . exp RRB cstmt elseiflist ELSE ostmt
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 148
+    lvalue                         shift and go to state 28
+    const                          shift and go to state 29
+
+state 140
 
     (35) ostmt -> IF LRB exp RRB cstmt elseiflist . ELSE ostmt
     (40) cstmt -> IF LRB exp RRB cstmt elseiflist . ELSE cstmt
     (44) elseiflist -> elseiflist . ELSEIF LRB exp RRB cstmt
 
-    ELSE            shift and go to state 143
-    ELSEIF          shift and go to state 144
+    ELSE            shift and go to state 149
+    ELSEIF          shift and go to state 150
 
 
-state 138
+state 141
 
     (45) elseiflist -> eps .
 
@@ -3199,7 +3254,75 @@ state 138
     ELSEIF          reduce using rule 45 (elseiflist -> eps .)
 
 
-state 139
+state 142
+
+    (41) cstmt -> FOR LRB . exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> FOR LRB . ID IN ID RRB cstmt
+    (36) ostmt -> FOR LRB . exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> FOR LRB . ID IN ID RRB ostmt
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+
+    ID              shift and go to state 152
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 151
+    lvalue                         shift and go to state 28
+    const                          shift and go to state 29
+
+state 143
+
+    (43) cstmt -> WHILE LRB . exp RRB cstmt
+    (38) ostmt -> WHILE LRB . exp RRB ostmt
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 153
+    lvalue                         shift and go to state 28
+    const                          shift and go to state 29
+
+state 144
 
     (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON . exp RRB ostmt
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON . exp RRB cstmt
@@ -3228,15 +3351,15 @@ state 139
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 145
+    exp                            shift and go to state 154
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 140
+state 145
 
     (37) ostmt -> FOR LRB ID IN ID RRB . ostmt
     (42) cstmt -> FOR LRB ID IN ID RRB . cstmt
-    (33) ostmt -> . IF LRB exp RRB simple
+    (33) ostmt -> . IF LRB exp RRB cstmt
     (34) ostmt -> . IF LRB exp RRB ostmt
     (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
     (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -3276,8 +3399,8 @@ state 140
     (13) iddec -> . lvalue ASSIGN exp
 
     IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
+    FOR             shift and go to state 88
+    WHILE           shift and go to state 89
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -3291,10 +3414,10 @@ state 140
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    ostmt                          shift and go to state 146
-    cstmt                          shift and go to state 147
+    ostmt                          shift and go to state 155
+    cstmt                          shift and go to state 156
     exp                            shift and go to state 87
-    simple                         shift and go to state 88
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -3302,18 +3425,18 @@ state 140
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 141
+state 146
 
     (50) simple -> ON LRB exp RRB LCB cases . RCB SEMICOLON
     (29) cases -> cases . case
     (28) case -> . WHERE const COLON stmtlist
 
-    RCB             shift and go to state 148
-    WHERE           shift and go to state 150
+    RCB             shift and go to state 157
+    WHERE           shift and go to state 159
 
-    case                           shift and go to state 149
+    case                           shift and go to state 158
 
-state 142
+state 147
 
     (30) cases -> eps .
 
@@ -3321,11 +3444,51 @@ state 142
     WHERE           reduce using rule 30 (cases -> eps .)
 
 
-state 143
+state 148
+
+    (40) cstmt -> IF LRB exp . RRB cstmt elseiflist ELSE cstmt
+    (33) ostmt -> IF LRB exp . RRB cstmt
+    (34) ostmt -> IF LRB exp . RRB ostmt
+    (35) ostmt -> IF LRB exp . RRB cstmt elseiflist ELSE ostmt
+    (59) exp -> exp . operator exp
+    (60) exp -> exp . relop exp
+    (66) operator -> . AND
+    (67) operator -> . OR
+    (68) operator -> . SUM
+    (69) operator -> . SUB
+    (70) operator -> . MUL
+    (71) operator -> . DIV
+    (72) operator -> . MOD
+    (52) relop -> . GT
+    (53) relop -> . GE
+    (54) relop -> . LT
+    (55) relop -> . LE
+    (56) relop -> . EQ
+    (57) relop -> . NE
+
+    RRB             shift and go to state 160
+    AND             shift and go to state 52
+    OR              shift and go to state 53
+    SUM             shift and go to state 54
+    SUB             shift and go to state 55
+    MUL             shift and go to state 56
+    DIV             shift and go to state 57
+    MOD             shift and go to state 58
+    GT              shift and go to state 59
+    GE              shift and go to state 60
+    LT              shift and go to state 61
+    LE              shift and go to state 62
+    EQ              shift and go to state 63
+    NE              shift and go to state 64
+
+    operator                       shift and go to state 50
+    relop                          shift and go to state 51
+
+state 149
 
     (35) ostmt -> IF LRB exp RRB cstmt elseiflist ELSE . ostmt
     (40) cstmt -> IF LRB exp RRB cstmt elseiflist ELSE . cstmt
-    (33) ostmt -> . IF LRB exp RRB simple
+    (33) ostmt -> . IF LRB exp RRB cstmt
     (34) ostmt -> . IF LRB exp RRB ostmt
     (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
     (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -3365,8 +3528,8 @@ state 143
     (13) iddec -> . lvalue ASSIGN exp
 
     IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
+    FOR             shift and go to state 88
+    WHILE           shift and go to state 89
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -3381,9 +3544,9 @@ state 143
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    cstmt                          shift and go to state 151
-    ostmt                          shift and go to state 152
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 161
+    ostmt                          shift and go to state 162
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -3391,14 +3554,118 @@ state 143
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 144
+state 150
 
     (44) elseiflist -> elseiflist ELSEIF . LRB exp RRB cstmt
 
-    LRB             shift and go to state 153
+    LRB             shift and go to state 163
 
 
-state 145
+state 151
+
+    (41) cstmt -> FOR LRB exp . SEMICOLON exp SEMICOLON exp RRB cstmt
+    (36) ostmt -> FOR LRB exp . SEMICOLON exp SEMICOLON exp RRB ostmt
+    (59) exp -> exp . operator exp
+    (60) exp -> exp . relop exp
+    (66) operator -> . AND
+    (67) operator -> . OR
+    (68) operator -> . SUM
+    (69) operator -> . SUB
+    (70) operator -> . MUL
+    (71) operator -> . DIV
+    (72) operator -> . MOD
+    (52) relop -> . GT
+    (53) relop -> . GE
+    (54) relop -> . LT
+    (55) relop -> . LE
+    (56) relop -> . EQ
+    (57) relop -> . NE
+
+    SEMICOLON       shift and go to state 164
+    AND             shift and go to state 52
+    OR              shift and go to state 53
+    SUM             shift and go to state 54
+    SUB             shift and go to state 55
+    MUL             shift and go to state 56
+    DIV             shift and go to state 57
+    MOD             shift and go to state 58
+    GT              shift and go to state 59
+    GE              shift and go to state 60
+    LT              shift and go to state 61
+    LE              shift and go to state 62
+    EQ              shift and go to state 63
+    NE              shift and go to state 64
+
+    operator                       shift and go to state 50
+    relop                          shift and go to state 51
+
+state 152
+
+    (42) cstmt -> FOR LRB ID . IN ID RRB cstmt
+    (37) ostmt -> FOR LRB ID . IN ID RRB ostmt
+    (25) lvalue -> ID .
+    (26) lvalue -> ID . LSB exp RSB
+    (27) lvalue -> ID . LRB explist RRB
+
+    IN              shift and go to state 165
+    ASSIGN          reduce using rule 25 (lvalue -> ID .)
+    SEMICOLON       reduce using rule 25 (lvalue -> ID .)
+    AND             reduce using rule 25 (lvalue -> ID .)
+    OR              reduce using rule 25 (lvalue -> ID .)
+    SUM             reduce using rule 25 (lvalue -> ID .)
+    SUB             reduce using rule 25 (lvalue -> ID .)
+    MUL             reduce using rule 25 (lvalue -> ID .)
+    DIV             reduce using rule 25 (lvalue -> ID .)
+    MOD             reduce using rule 25 (lvalue -> ID .)
+    GT              reduce using rule 25 (lvalue -> ID .)
+    GE              reduce using rule 25 (lvalue -> ID .)
+    LT              reduce using rule 25 (lvalue -> ID .)
+    LE              reduce using rule 25 (lvalue -> ID .)
+    EQ              reduce using rule 25 (lvalue -> ID .)
+    NE              reduce using rule 25 (lvalue -> ID .)
+    LSB             shift and go to state 17
+    LRB             shift and go to state 18
+
+
+state 153
+
+    (43) cstmt -> WHILE LRB exp . RRB cstmt
+    (38) ostmt -> WHILE LRB exp . RRB ostmt
+    (59) exp -> exp . operator exp
+    (60) exp -> exp . relop exp
+    (66) operator -> . AND
+    (67) operator -> . OR
+    (68) operator -> . SUM
+    (69) operator -> . SUB
+    (70) operator -> . MUL
+    (71) operator -> . DIV
+    (72) operator -> . MOD
+    (52) relop -> . GT
+    (53) relop -> . GE
+    (54) relop -> . LT
+    (55) relop -> . LE
+    (56) relop -> . EQ
+    (57) relop -> . NE
+
+    RRB             shift and go to state 166
+    AND             shift and go to state 52
+    OR              shift and go to state 53
+    SUM             shift and go to state 54
+    SUB             shift and go to state 55
+    MUL             shift and go to state 56
+    DIV             shift and go to state 57
+    MOD             shift and go to state 58
+    GT              shift and go to state 59
+    GE              shift and go to state 60
+    LT              shift and go to state 61
+    LE              shift and go to state 62
+    EQ              shift and go to state 63
+    NE              shift and go to state 64
+
+    operator                       shift and go to state 50
+    relop                          shift and go to state 51
+
+state 154
 
     (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp . RRB ostmt
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp . RRB cstmt
@@ -3418,7 +3685,7 @@ state 145
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    RRB             shift and go to state 154
+    RRB             shift and go to state 167
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -3436,7 +3703,7 @@ state 145
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 146
+state 155
 
     (37) ostmt -> FOR LRB ID IN ID RRB ostmt .
 
@@ -3459,7 +3726,7 @@ state 146
     WHERE           reduce using rule 37 (ostmt -> FOR LRB ID IN ID RRB ostmt .)
 
 
-state 147
+state 156
 
     (42) cstmt -> FOR LRB ID IN ID RRB cstmt .
 
@@ -3484,14 +3751,14 @@ state 147
     WHERE           reduce using rule 42 (cstmt -> FOR LRB ID IN ID RRB cstmt .)
 
 
-state 148
+state 157
 
     (50) simple -> ON LRB exp RRB LCB cases RCB . SEMICOLON
 
-    SEMICOLON       shift and go to state 155
+    SEMICOLON       shift and go to state 168
 
 
-state 149
+state 158
 
     (29) cases -> cases case .
 
@@ -3499,7 +3766,7 @@ state 149
     WHERE           reduce using rule 29 (cases -> cases case .)
 
 
-state 150
+state 159
 
     (28) case -> WHERE . const COLON stmtlist
     (73) const -> . INTEGERNUMBER
@@ -3512,9 +3779,81 @@ state 150
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    const                          shift and go to state 156
+    const                          shift and go to state 169
 
-state 151
+state 160
+
+    (40) cstmt -> IF LRB exp RRB . cstmt elseiflist ELSE cstmt
+    (33) ostmt -> IF LRB exp RRB . cstmt
+    (34) ostmt -> IF LRB exp RRB . ostmt
+    (35) ostmt -> IF LRB exp RRB . cstmt elseiflist ELSE ostmt
+    (39) cstmt -> . simple
+    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
+    (43) cstmt -> . WHILE LRB exp RRB cstmt
+    (33) ostmt -> . IF LRB exp RRB cstmt
+    (34) ostmt -> . IF LRB exp RRB ostmt
+    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
+    (38) ostmt -> . WHILE LRB exp RRB ostmt
+    (46) simple -> . RETURN exp SEMICOLON
+    (47) simple -> . exp SEMICOLON
+    (48) simple -> . block
+    (49) simple -> . vardec
+    (50) simple -> . ON LRB exp RRB LCB cases RCB SEMICOLON
+    (51) simple -> . PRINT LRB ID RRB SEMICOLON
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (22) block -> . LCB stmtlist RCB
+    (6) vardec -> . idlist COLON type SEMICOLON
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+    (14) idlist -> . iddec
+    (15) idlist -> . idlist COMMA iddec
+    (12) iddec -> . lvalue
+    (13) iddec -> . lvalue ASSIGN exp
+
+    IF              shift and go to state 128
+    FOR             shift and go to state 131
+    WHILE           shift and go to state 132
+    RETURN          shift and go to state 91
+    ON              shift and go to state 94
+    PRINT           shift and go to state 95
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    LCB             shift and go to state 42
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 87
+    cstmt                          shift and go to state 170
+    ostmt                          shift and go to state 130
+    simple                         shift and go to state 90
+    block                          shift and go to state 92
+    vardec                         shift and go to state 93
+    lvalue                         shift and go to state 96
+    const                          shift and go to state 29
+    idlist                         shift and go to state 8
+    iddec                          shift and go to state 11
+
+state 161
 
     (40) cstmt -> IF LRB exp RRB cstmt elseiflist ELSE cstmt .
 
@@ -3539,7 +3878,7 @@ state 151
     WHERE           reduce using rule 40 (cstmt -> IF LRB exp RRB cstmt elseiflist ELSE cstmt .)
 
 
-state 152
+state 162
 
     (35) ostmt -> IF LRB exp RRB cstmt elseiflist ELSE ostmt .
 
@@ -3562,7 +3901,7 @@ state 152
     WHERE           reduce using rule 35 (ostmt -> IF LRB exp RRB cstmt elseiflist ELSE ostmt .)
 
 
-state 153
+state 163
 
     (44) elseiflist -> elseiflist ELSEIF LRB . exp RRB cstmt
     (58) exp -> . lvalue ASSIGN exp
@@ -3590,15 +3929,126 @@ state 153
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 157
+    exp                            shift and go to state 171
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 154
+state 164
+
+    (41) cstmt -> FOR LRB exp SEMICOLON . exp SEMICOLON exp RRB cstmt
+    (36) ostmt -> FOR LRB exp SEMICOLON . exp SEMICOLON exp RRB ostmt
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 172
+    lvalue                         shift and go to state 28
+    const                          shift and go to state 29
+
+state 165
+
+    (42) cstmt -> FOR LRB ID IN . ID RRB cstmt
+    (37) ostmt -> FOR LRB ID IN . ID RRB ostmt
+
+    ID              shift and go to state 173
+
+
+state 166
+
+    (43) cstmt -> WHILE LRB exp RRB . cstmt
+    (38) ostmt -> WHILE LRB exp RRB . ostmt
+    (39) cstmt -> . simple
+    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
+    (43) cstmt -> . WHILE LRB exp RRB cstmt
+    (33) ostmt -> . IF LRB exp RRB cstmt
+    (34) ostmt -> . IF LRB exp RRB ostmt
+    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
+    (38) ostmt -> . WHILE LRB exp RRB ostmt
+    (46) simple -> . RETURN exp SEMICOLON
+    (47) simple -> . exp SEMICOLON
+    (48) simple -> . block
+    (49) simple -> . vardec
+    (50) simple -> . ON LRB exp RRB LCB cases RCB SEMICOLON
+    (51) simple -> . PRINT LRB ID RRB SEMICOLON
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (22) block -> . LCB stmtlist RCB
+    (6) vardec -> . idlist COLON type SEMICOLON
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+    (14) idlist -> . iddec
+    (15) idlist -> . idlist COMMA iddec
+    (12) iddec -> . lvalue
+    (13) iddec -> . lvalue ASSIGN exp
+
+    IF              shift and go to state 128
+    FOR             shift and go to state 131
+    WHILE           shift and go to state 132
+    RETURN          shift and go to state 91
+    ON              shift and go to state 94
+    PRINT           shift and go to state 95
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    LCB             shift and go to state 42
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 87
+    cstmt                          shift and go to state 136
+    ostmt                          shift and go to state 135
+    simple                         shift and go to state 90
+    block                          shift and go to state 92
+    vardec                         shift and go to state 93
+    lvalue                         shift and go to state 96
+    const                          shift and go to state 29
+    idlist                         shift and go to state 8
+    iddec                          shift and go to state 11
+
+state 167
 
     (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB . ostmt
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB . cstmt
-    (33) ostmt -> . IF LRB exp RRB simple
+    (33) ostmt -> . IF LRB exp RRB cstmt
     (34) ostmt -> . IF LRB exp RRB ostmt
     (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
     (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -3638,8 +4088,8 @@ state 154
     (13) iddec -> . lvalue ASSIGN exp
 
     IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
+    FOR             shift and go to state 88
+    WHILE           shift and go to state 89
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -3654,9 +4104,9 @@ state 154
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    ostmt                          shift and go to state 158
-    cstmt                          shift and go to state 159
-    simple                         shift and go to state 88
+    ostmt                          shift and go to state 174
+    cstmt                          shift and go to state 175
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -3664,7 +4114,7 @@ state 154
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 155
+state 168
 
     (50) simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .
 
@@ -3684,19 +4134,51 @@ state 155
     FLOATNUMBER     reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
     TRUE            reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
     FALSE           reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
-    WHERE           reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
     ELSE            reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
     ELSEIF          reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
+    WHERE           reduce using rule 50 (simple -> ON LRB exp RRB LCB cases RCB SEMICOLON .)
 
 
-state 156
+state 169
 
     (28) case -> WHERE const . COLON stmtlist
 
-    COLON           shift and go to state 160
+    COLON           shift and go to state 176
 
 
-state 157
+state 170
+
+    (40) cstmt -> IF LRB exp RRB cstmt . elseiflist ELSE cstmt
+    (33) ostmt -> IF LRB exp RRB cstmt .
+    (35) ostmt -> IF LRB exp RRB cstmt . elseiflist ELSE ostmt
+    (44) elseiflist -> . elseiflist ELSEIF LRB exp RRB cstmt
+    (45) elseiflist -> . eps
+    (80) eps -> .
+
+    RCB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    IF              reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    FOR             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    WHILE           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    RETURN          reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    ON              reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    PRINT           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    LRB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    SUB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    NOT             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    LCB             reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    ID              reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    INTEGERNUMBER   reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    FLOATNUMBER     reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    TRUE            reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    FALSE           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    WHERE           reduce using rule 33 (ostmt -> IF LRB exp RRB cstmt .)
+    ELSE            reduce using rule 80 (eps -> .)
+    ELSEIF          reduce using rule 80 (eps -> .)
+
+    elseiflist                     shift and go to state 177
+    eps                            shift and go to state 141
+
+state 171
 
     (44) elseiflist -> elseiflist ELSEIF LRB exp . RRB cstmt
     (59) exp -> exp . operator exp
@@ -3715,7 +4197,7 @@ state 157
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    RRB             shift and go to state 161
+    RRB             shift and go to state 178
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -3733,7 +4215,53 @@ state 157
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 158
+state 172
+
+    (41) cstmt -> FOR LRB exp SEMICOLON exp . SEMICOLON exp RRB cstmt
+    (36) ostmt -> FOR LRB exp SEMICOLON exp . SEMICOLON exp RRB ostmt
+    (59) exp -> exp . operator exp
+    (60) exp -> exp . relop exp
+    (66) operator -> . AND
+    (67) operator -> . OR
+    (68) operator -> . SUM
+    (69) operator -> . SUB
+    (70) operator -> . MUL
+    (71) operator -> . DIV
+    (72) operator -> . MOD
+    (52) relop -> . GT
+    (53) relop -> . GE
+    (54) relop -> . LT
+    (55) relop -> . LE
+    (56) relop -> . EQ
+    (57) relop -> . NE
+
+    SEMICOLON       shift and go to state 179
+    AND             shift and go to state 52
+    OR              shift and go to state 53
+    SUM             shift and go to state 54
+    SUB             shift and go to state 55
+    MUL             shift and go to state 56
+    DIV             shift and go to state 57
+    MOD             shift and go to state 58
+    GT              shift and go to state 59
+    GE              shift and go to state 60
+    LT              shift and go to state 61
+    LE              shift and go to state 62
+    EQ              shift and go to state 63
+    NE              shift and go to state 64
+
+    operator                       shift and go to state 50
+    relop                          shift and go to state 51
+
+state 173
+
+    (42) cstmt -> FOR LRB ID IN ID . RRB cstmt
+    (37) ostmt -> FOR LRB ID IN ID . RRB ostmt
+
+    RRB             shift and go to state 180
+
+
+state 174
 
     (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt .
 
@@ -3756,7 +4284,7 @@ state 158
     WHERE           reduce using rule 36 (ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt .)
 
 
-state 159
+state 175
 
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt .
 
@@ -3781,7 +4309,7 @@ state 159
     WHERE           reduce using rule 41 (cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt .)
 
 
-state 160
+state 176
 
     (28) case -> WHERE const COLON . stmtlist
     (23) stmtlist -> . stmtlist stmt
@@ -3806,10 +4334,20 @@ state 160
     RCB             reduce using rule 80 (eps -> .)
     WHERE           reduce using rule 80 (eps -> .)
 
-    stmtlist                       shift and go to state 162
+    stmtlist                       shift and go to state 181
     eps                            shift and go to state 72
 
-state 161
+state 177
+
+    (40) cstmt -> IF LRB exp RRB cstmt elseiflist . ELSE cstmt
+    (35) ostmt -> IF LRB exp RRB cstmt elseiflist . ELSE ostmt
+    (44) elseiflist -> elseiflist . ELSEIF LRB exp RRB cstmt
+
+    ELSE            shift and go to state 182
+    ELSEIF          shift and go to state 150
+
+
+state 178
 
     (44) elseiflist -> elseiflist ELSEIF LRB exp RRB . cstmt
     (39) cstmt -> . simple
@@ -3845,9 +4383,9 @@ state 161
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
-    IF              shift and go to state 164
-    FOR             shift and go to state 165
-    WHILE           shift and go to state 166
+    IF              shift and go to state 184
+    FOR             shift and go to state 185
+    WHILE           shift and go to state 186
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -3862,8 +4400,8 @@ state 161
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    cstmt                          shift and go to state 163
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 183
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -3871,13 +4409,116 @@ state 161
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 162
+state 179
+
+    (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON . exp RRB cstmt
+    (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON . exp RRB ostmt
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 187
+    lvalue                         shift and go to state 28
+    const                          shift and go to state 29
+
+state 180
+
+    (42) cstmt -> FOR LRB ID IN ID RRB . cstmt
+    (37) ostmt -> FOR LRB ID IN ID RRB . ostmt
+    (39) cstmt -> . simple
+    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
+    (43) cstmt -> . WHILE LRB exp RRB cstmt
+    (33) ostmt -> . IF LRB exp RRB cstmt
+    (34) ostmt -> . IF LRB exp RRB ostmt
+    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
+    (38) ostmt -> . WHILE LRB exp RRB ostmt
+    (46) simple -> . RETURN exp SEMICOLON
+    (47) simple -> . exp SEMICOLON
+    (48) simple -> . block
+    (49) simple -> . vardec
+    (50) simple -> . ON LRB exp RRB LCB cases RCB SEMICOLON
+    (51) simple -> . PRINT LRB ID RRB SEMICOLON
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (22) block -> . LCB stmtlist RCB
+    (6) vardec -> . idlist COLON type SEMICOLON
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+    (14) idlist -> . iddec
+    (15) idlist -> . idlist COMMA iddec
+    (12) iddec -> . lvalue
+    (13) iddec -> . lvalue ASSIGN exp
+
+    IF              shift and go to state 128
+    FOR             shift and go to state 131
+    WHILE           shift and go to state 132
+    RETURN          shift and go to state 91
+    ON              shift and go to state 94
+    PRINT           shift and go to state 95
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    LCB             shift and go to state 42
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    cstmt                          shift and go to state 156
+    ostmt                          shift and go to state 155
+    simple                         shift and go to state 90
+    exp                            shift and go to state 87
+    block                          shift and go to state 92
+    vardec                         shift and go to state 93
+    lvalue                         shift and go to state 96
+    const                          shift and go to state 29
+    idlist                         shift and go to state 8
+    iddec                          shift and go to state 11
+
+state 181
 
     (28) case -> WHERE const COLON stmtlist .
     (23) stmtlist -> stmtlist . stmt
     (31) stmt -> . ostmt
     (32) stmt -> . cstmt
-    (33) ostmt -> . IF LRB exp RRB simple
+    (33) ostmt -> . IF LRB exp RRB cstmt
     (34) ostmt -> . IF LRB exp RRB ostmt
     (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
     (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
@@ -3919,8 +4560,8 @@ state 162
     RCB             reduce using rule 28 (case -> WHERE const COLON stmtlist .)
     WHERE           reduce using rule 28 (case -> WHERE const COLON stmtlist .)
     IF              shift and go to state 86
-    FOR             shift and go to state 89
-    WHILE           shift and go to state 90
+    FOR             shift and go to state 88
+    WHILE           shift and go to state 89
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -3939,14 +4580,84 @@ state 162
     ostmt                          shift and go to state 84
     cstmt                          shift and go to state 85
     exp                            shift and go to state 87
-    simple                         shift and go to state 88
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 163
+state 182
+
+    (40) cstmt -> IF LRB exp RRB cstmt elseiflist ELSE . cstmt
+    (35) ostmt -> IF LRB exp RRB cstmt elseiflist ELSE . ostmt
+    (39) cstmt -> . simple
+    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
+    (43) cstmt -> . WHILE LRB exp RRB cstmt
+    (33) ostmt -> . IF LRB exp RRB cstmt
+    (34) ostmt -> . IF LRB exp RRB ostmt
+    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
+    (38) ostmt -> . WHILE LRB exp RRB ostmt
+    (46) simple -> . RETURN exp SEMICOLON
+    (47) simple -> . exp SEMICOLON
+    (48) simple -> . block
+    (49) simple -> . vardec
+    (50) simple -> . ON LRB exp RRB LCB cases RCB SEMICOLON
+    (51) simple -> . PRINT LRB ID RRB SEMICOLON
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (22) block -> . LCB stmtlist RCB
+    (6) vardec -> . idlist COLON type SEMICOLON
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+    (14) idlist -> . iddec
+    (15) idlist -> . idlist COMMA iddec
+    (12) iddec -> . lvalue
+    (13) iddec -> . lvalue ASSIGN exp
+
+    IF              shift and go to state 128
+    FOR             shift and go to state 131
+    WHILE           shift and go to state 132
+    RETURN          shift and go to state 91
+    ON              shift and go to state 94
+    PRINT           shift and go to state 95
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    LCB             shift and go to state 42
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 87
+    cstmt                          shift and go to state 161
+    ostmt                          shift and go to state 162
+    simple                         shift and go to state 90
+    block                          shift and go to state 92
+    vardec                         shift and go to state 93
+    lvalue                         shift and go to state 96
+    const                          shift and go to state 29
+    idlist                         shift and go to state 8
+    iddec                          shift and go to state 11
+
+state 183
 
     (44) elseiflist -> elseiflist ELSEIF LRB exp RRB cstmt .
 
@@ -3954,29 +4665,67 @@ state 163
     ELSEIF          reduce using rule 44 (elseiflist -> elseiflist ELSEIF LRB exp RRB cstmt .)
 
 
-state 164
+state 184
 
     (40) cstmt -> IF . LRB exp RRB cstmt elseiflist ELSE cstmt
 
-    LRB             shift and go to state 167
+    LRB             shift and go to state 188
 
 
-state 165
+state 185
 
     (41) cstmt -> FOR . LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
     (42) cstmt -> FOR . LRB ID IN ID RRB cstmt
 
-    LRB             shift and go to state 168
+    LRB             shift and go to state 189
 
 
-state 166
+state 186
 
     (43) cstmt -> WHILE . LRB exp RRB cstmt
 
-    LRB             shift and go to state 169
+    LRB             shift and go to state 190
 
 
-state 167
+state 187
+
+    (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp . RRB cstmt
+    (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp . RRB ostmt
+    (59) exp -> exp . operator exp
+    (60) exp -> exp . relop exp
+    (66) operator -> . AND
+    (67) operator -> . OR
+    (68) operator -> . SUM
+    (69) operator -> . SUB
+    (70) operator -> . MUL
+    (71) operator -> . DIV
+    (72) operator -> . MOD
+    (52) relop -> . GT
+    (53) relop -> . GE
+    (54) relop -> . LT
+    (55) relop -> . LE
+    (56) relop -> . EQ
+    (57) relop -> . NE
+
+    RRB             shift and go to state 191
+    AND             shift and go to state 52
+    OR              shift and go to state 53
+    SUM             shift and go to state 54
+    SUB             shift and go to state 55
+    MUL             shift and go to state 56
+    DIV             shift and go to state 57
+    MOD             shift and go to state 58
+    GT              shift and go to state 59
+    GE              shift and go to state 60
+    LT              shift and go to state 61
+    LE              shift and go to state 62
+    EQ              shift and go to state 63
+    NE              shift and go to state 64
+
+    operator                       shift and go to state 50
+    relop                          shift and go to state 51
+
+state 188
 
     (40) cstmt -> IF LRB . exp RRB cstmt elseiflist ELSE cstmt
     (58) exp -> . lvalue ASSIGN exp
@@ -4004,11 +4753,11 @@ state 167
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 170
+    exp                            shift and go to state 192
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 168
+state 189
 
     (41) cstmt -> FOR LRB . exp SEMICOLON exp SEMICOLON exp RRB cstmt
     (42) cstmt -> FOR LRB . ID IN ID RRB cstmt
@@ -4028,7 +4777,7 @@ state 168
     (75) const -> . TRUE
     (76) const -> . FALSE
 
-    ID              shift and go to state 172
+    ID              shift and go to state 194
     LRB             shift and go to state 30
     SUB             shift and go to state 31
     NOT             shift and go to state 32
@@ -4037,11 +4786,11 @@ state 168
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 171
+    exp                            shift and go to state 193
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 169
+state 190
 
     (43) cstmt -> WHILE LRB . exp RRB cstmt
     (58) exp -> . lvalue ASSIGN exp
@@ -4069,11 +4818,81 @@ state 169
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 173
+    exp                            shift and go to state 195
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 170
+state 191
+
+    (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB . cstmt
+    (36) ostmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB . ostmt
+    (39) cstmt -> . simple
+    (40) cstmt -> . IF LRB exp RRB cstmt elseiflist ELSE cstmt
+    (41) cstmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
+    (42) cstmt -> . FOR LRB ID IN ID RRB cstmt
+    (43) cstmt -> . WHILE LRB exp RRB cstmt
+    (33) ostmt -> . IF LRB exp RRB cstmt
+    (34) ostmt -> . IF LRB exp RRB ostmt
+    (35) ostmt -> . IF LRB exp RRB cstmt elseiflist ELSE ostmt
+    (36) ostmt -> . FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
+    (37) ostmt -> . FOR LRB ID IN ID RRB ostmt
+    (38) ostmt -> . WHILE LRB exp RRB ostmt
+    (46) simple -> . RETURN exp SEMICOLON
+    (47) simple -> . exp SEMICOLON
+    (48) simple -> . block
+    (49) simple -> . vardec
+    (50) simple -> . ON LRB exp RRB LCB cases RCB SEMICOLON
+    (51) simple -> . PRINT LRB ID RRB SEMICOLON
+    (58) exp -> . lvalue ASSIGN exp
+    (59) exp -> . exp operator exp
+    (60) exp -> . exp relop exp
+    (61) exp -> . const
+    (62) exp -> . lvalue
+    (63) exp -> . LRB exp RRB
+    (64) exp -> . SUB exp
+    (65) exp -> . NOT exp
+    (22) block -> . LCB stmtlist RCB
+    (6) vardec -> . idlist COLON type SEMICOLON
+    (25) lvalue -> . ID
+    (26) lvalue -> . ID LSB exp RSB
+    (27) lvalue -> . ID LRB explist RRB
+    (73) const -> . INTEGERNUMBER
+    (74) const -> . FLOATNUMBER
+    (75) const -> . TRUE
+    (76) const -> . FALSE
+    (14) idlist -> . iddec
+    (15) idlist -> . idlist COMMA iddec
+    (12) iddec -> . lvalue
+    (13) iddec -> . lvalue ASSIGN exp
+
+    IF              shift and go to state 128
+    FOR             shift and go to state 131
+    WHILE           shift and go to state 132
+    RETURN          shift and go to state 91
+    ON              shift and go to state 94
+    PRINT           shift and go to state 95
+    LRB             shift and go to state 30
+    SUB             shift and go to state 31
+    NOT             shift and go to state 32
+    LCB             shift and go to state 42
+    ID              shift and go to state 10
+    INTEGERNUMBER   shift and go to state 33
+    FLOATNUMBER     shift and go to state 34
+    TRUE            shift and go to state 35
+    FALSE           shift and go to state 36
+
+    exp                            shift and go to state 87
+    cstmt                          shift and go to state 175
+    ostmt                          shift and go to state 174
+    simple                         shift and go to state 90
+    block                          shift and go to state 92
+    vardec                         shift and go to state 93
+    lvalue                         shift and go to state 96
+    const                          shift and go to state 29
+    idlist                         shift and go to state 8
+    iddec                          shift and go to state 11
+
+state 192
 
     (40) cstmt -> IF LRB exp . RRB cstmt elseiflist ELSE cstmt
     (59) exp -> exp . operator exp
@@ -4092,7 +4911,7 @@ state 170
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    RRB             shift and go to state 174
+    RRB             shift and go to state 196
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -4110,7 +4929,7 @@ state 170
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 171
+state 193
 
     (41) cstmt -> FOR LRB exp . SEMICOLON exp SEMICOLON exp RRB cstmt
     (59) exp -> exp . operator exp
@@ -4129,7 +4948,7 @@ state 171
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    SEMICOLON       shift and go to state 175
+    SEMICOLON       shift and go to state 197
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -4147,14 +4966,14 @@ state 171
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 172
+state 194
 
     (42) cstmt -> FOR LRB ID . IN ID RRB cstmt
     (25) lvalue -> ID .
     (26) lvalue -> ID . LSB exp RSB
     (27) lvalue -> ID . LRB explist RRB
 
-    IN              shift and go to state 176
+    IN              shift and go to state 198
     ASSIGN          reduce using rule 25 (lvalue -> ID .)
     SEMICOLON       reduce using rule 25 (lvalue -> ID .)
     AND             reduce using rule 25 (lvalue -> ID .)
@@ -4174,7 +4993,7 @@ state 172
     LRB             shift and go to state 18
 
 
-state 173
+state 195
 
     (43) cstmt -> WHILE LRB exp . RRB cstmt
     (59) exp -> exp . operator exp
@@ -4193,7 +5012,7 @@ state 173
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    RRB             shift and go to state 177
+    RRB             shift and go to state 199
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -4211,7 +5030,7 @@ state 173
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 174
+state 196
 
     (40) cstmt -> IF LRB exp RRB . cstmt elseiflist ELSE cstmt
     (39) cstmt -> . simple
@@ -4247,9 +5066,9 @@ state 174
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
-    IF              shift and go to state 164
-    FOR             shift and go to state 165
-    WHILE           shift and go to state 166
+    IF              shift and go to state 184
+    FOR             shift and go to state 185
+    WHILE           shift and go to state 186
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -4264,8 +5083,8 @@ state 174
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    cstmt                          shift and go to state 178
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 200
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -4273,7 +5092,7 @@ state 174
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 175
+state 197
 
     (41) cstmt -> FOR LRB exp SEMICOLON . exp SEMICOLON exp RRB cstmt
     (58) exp -> . lvalue ASSIGN exp
@@ -4301,18 +5120,18 @@ state 175
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 179
+    exp                            shift and go to state 201
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 176
+state 198
 
     (42) cstmt -> FOR LRB ID IN . ID RRB cstmt
 
-    ID              shift and go to state 180
+    ID              shift and go to state 202
 
 
-state 177
+state 199
 
     (43) cstmt -> WHILE LRB exp RRB . cstmt
     (39) cstmt -> . simple
@@ -4348,9 +5167,9 @@ state 177
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
-    IF              shift and go to state 164
-    FOR             shift and go to state 165
-    WHILE           shift and go to state 166
+    IF              shift and go to state 184
+    FOR             shift and go to state 185
+    WHILE           shift and go to state 186
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -4365,8 +5184,8 @@ state 177
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    cstmt                          shift and go to state 134
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 136
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -4374,7 +5193,7 @@ state 177
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 178
+state 200
 
     (40) cstmt -> IF LRB exp RRB cstmt . elseiflist ELSE cstmt
     (44) elseiflist -> . elseiflist ELSEIF LRB exp RRB cstmt
@@ -4384,10 +5203,10 @@ state 178
     ELSE            reduce using rule 80 (eps -> .)
     ELSEIF          reduce using rule 80 (eps -> .)
 
-    elseiflist                     shift and go to state 181
-    eps                            shift and go to state 138
+    elseiflist                     shift and go to state 203
+    eps                            shift and go to state 141
 
-state 179
+state 201
 
     (41) cstmt -> FOR LRB exp SEMICOLON exp . SEMICOLON exp RRB cstmt
     (59) exp -> exp . operator exp
@@ -4406,7 +5225,7 @@ state 179
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    SEMICOLON       shift and go to state 182
+    SEMICOLON       shift and go to state 204
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -4424,23 +5243,23 @@ state 179
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 180
+state 202
 
     (42) cstmt -> FOR LRB ID IN ID . RRB cstmt
 
-    RRB             shift and go to state 183
+    RRB             shift and go to state 205
 
 
-state 181
+state 203
 
     (40) cstmt -> IF LRB exp RRB cstmt elseiflist . ELSE cstmt
     (44) elseiflist -> elseiflist . ELSEIF LRB exp RRB cstmt
 
-    ELSE            shift and go to state 184
-    ELSEIF          shift and go to state 144
+    ELSE            shift and go to state 206
+    ELSEIF          shift and go to state 150
 
 
-state 182
+state 204
 
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON . exp RRB cstmt
     (58) exp -> . lvalue ASSIGN exp
@@ -4468,11 +5287,11 @@ state 182
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    exp                            shift and go to state 185
+    exp                            shift and go to state 207
     lvalue                         shift and go to state 28
     const                          shift and go to state 29
 
-state 183
+state 205
 
     (42) cstmt -> FOR LRB ID IN ID RRB . cstmt
     (39) cstmt -> . simple
@@ -4508,9 +5327,9 @@ state 183
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
-    IF              shift and go to state 164
-    FOR             shift and go to state 165
-    WHILE           shift and go to state 166
+    IF              shift and go to state 184
+    FOR             shift and go to state 185
+    WHILE           shift and go to state 186
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -4524,8 +5343,8 @@ state 183
     TRUE            shift and go to state 35
     FALSE           shift and go to state 36
 
-    cstmt                          shift and go to state 147
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 156
+    simple                         shift and go to state 90
     exp                            shift and go to state 87
     block                          shift and go to state 92
     vardec                         shift and go to state 93
@@ -4534,7 +5353,7 @@ state 183
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 184
+state 206
 
     (40) cstmt -> IF LRB exp RRB cstmt elseiflist ELSE . cstmt
     (39) cstmt -> . simple
@@ -4570,9 +5389,9 @@ state 184
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
-    IF              shift and go to state 164
-    FOR             shift and go to state 165
-    WHILE           shift and go to state 166
+    IF              shift and go to state 184
+    FOR             shift and go to state 185
+    WHILE           shift and go to state 186
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -4587,8 +5406,8 @@ state 184
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    cstmt                          shift and go to state 151
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 161
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96
@@ -4596,7 +5415,7 @@ state 184
     idlist                         shift and go to state 8
     iddec                          shift and go to state 11
 
-state 185
+state 207
 
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp . RRB cstmt
     (59) exp -> exp . operator exp
@@ -4615,7 +5434,7 @@ state 185
     (56) relop -> . EQ
     (57) relop -> . NE
 
-    RRB             shift and go to state 186
+    RRB             shift and go to state 208
     AND             shift and go to state 52
     OR              shift and go to state 53
     SUM             shift and go to state 54
@@ -4633,7 +5452,7 @@ state 185
     operator                       shift and go to state 50
     relop                          shift and go to state 51
 
-state 186
+state 208
 
     (41) cstmt -> FOR LRB exp SEMICOLON exp SEMICOLON exp RRB . cstmt
     (39) cstmt -> . simple
@@ -4669,9 +5488,9 @@ state 186
     (12) iddec -> . lvalue
     (13) iddec -> . lvalue ASSIGN exp
 
-    IF              shift and go to state 164
-    FOR             shift and go to state 165
-    WHILE           shift and go to state 166
+    IF              shift and go to state 184
+    FOR             shift and go to state 185
+    WHILE           shift and go to state 186
     RETURN          shift and go to state 91
     ON              shift and go to state 94
     PRINT           shift and go to state 95
@@ -4686,8 +5505,8 @@ state 186
     FALSE           shift and go to state 36
 
     exp                            shift and go to state 87
-    cstmt                          shift and go to state 159
-    simple                         shift and go to state 88
+    cstmt                          shift and go to state 175
+    simple                         shift and go to state 90
     block                          shift and go to state 92
     vardec                         shift and go to state 93
     lvalue                         shift and go to state 96

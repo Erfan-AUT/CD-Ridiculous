@@ -112,12 +112,12 @@ def p_cases(p):
 
 def p_stmt(p):
     """stmt : ostmt
-    | cstmt""" 
+    | cstmt """ 
     print("p_stmt")
 
 
 def p_ostmt(p):
-    """ostmt : IF LRB exp RRB simple
+    """ostmt : IF LRB exp RRB cstmt
     | IF LRB exp RRB ostmt
     | IF LRB exp RRB cstmt elseiflist ELSE ostmt
     | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
