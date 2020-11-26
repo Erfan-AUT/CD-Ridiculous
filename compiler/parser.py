@@ -93,7 +93,8 @@ def p_stmtlist(p):
 
 def p_lvalue(p):
     """lvalue : ID
-    | ID LSB exp RSB"""
+    | ID LSB exp RSB
+    | ID LRB explist RRB"""
     print("p_lvalue")
 
 
@@ -111,7 +112,7 @@ def p_cases(p):
 
 def p_stmt(p):
     """stmt : ostmt
-    | cstmt"""
+    | cstmt""" 
     print("p_stmt")
 
 
@@ -121,7 +122,7 @@ def p_ostmt(p):
     | IF LRB exp RRB cstmt elseiflist ELSE ostmt
     | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
     | FOR LRB ID IN ID RRB ostmt
-    | WHILE LRB exp LRB ostmt
+    | WHILE LRB exp RRB ostmt
     """
 
 
@@ -130,7 +131,7 @@ def p_cstmt(p):
     | IF LRB exp RRB cstmt elseiflist ELSE cstmt
     | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
     | FOR LRB ID IN ID RRB cstmt
-    | WHILE LRB exp LRB cstmt
+    | WHILE LRB exp RRB cstmt
     """
 
 
@@ -166,7 +167,6 @@ def p_exp(p):
     | exp relop exp %prec LT
     | const
     | lvalue %prec OR
-    | lvalue LRB explist RRB
     | LRB exp RRB
     | SUB exp
     | NOT exp"""

@@ -1,6 +1,6 @@
 from compiler import lexer, parser
 
-with open("tests/parser/test3.txt") as file:
+with open("tests/parser/test2.txt") as file:
     data = file.read()
 
 def main():
