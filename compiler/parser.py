@@ -120,7 +120,7 @@ def p_ostmt(p):
     | IF LRB exp RRB ostmt
     | IF LRB exp RRB cstmt elseiflist ELSE ostmt
     | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
-    | FOR LRB ID IN RRB ostmt
+    | FOR LRB ID IN ID RRB ostmt
     | WHILE LRB exp LRB ostmt
     """
 
@@ -129,7 +129,7 @@ def p_cstmt(p):
     """cstmt : simple
     | IF LRB exp RRB cstmt elseiflist ELSE cstmt
     | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
-    | FOR LRB ID IN RRB cstmt
+    | FOR LRB ID IN ID RRB cstmt
     | WHILE LRB exp LRB cstmt
     """
 

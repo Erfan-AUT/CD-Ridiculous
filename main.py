@@ -1,9 +1,13 @@
 from compiler import lexer, parser
 
-with open("tests/parser/test1.txt") as file:
+with open("tests/parser/test3.txt") as file:
     data = file.read()
 
 def main():
+    result = parser.parse(data, lexer=lexer, debug=True)
+    print(result)
+
+def parser_repl():
     while True:
         try:
             s = input('calc > ')
