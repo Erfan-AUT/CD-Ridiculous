@@ -49,7 +49,7 @@ def p_type(p):
 
 def p_iddec(p):
     """iddec : lvalue
-    | ID ASSIGN exp
+    | lvalue ASSIGN exp
     """
     print("p_iddec")
 
@@ -165,8 +165,8 @@ def p_exp(p):
     | exp operator exp %prec AND
     | exp relop exp %prec LT
     | const
-    | lvalue
-    | ID LRB explist RRB
+    | lvalue %prec OR
+    | lvalue LRB explist RRB
     | LRB exp RRB
     | SUB exp
     | NOT exp"""
