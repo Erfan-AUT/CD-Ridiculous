@@ -1,5 +1,7 @@
 from ply.yacc import yacc
 from .lex import tokens
+from .nonTerminal import NonTerminal
+from .codeGenerator import CodeGenerator
 
 precedence = (
     ("left", "AND", "OR"),
@@ -170,7 +172,7 @@ def p_exp(p):
     | LRB exp RRB
     | SUB exp
     | NOT exp"""
-    print("p_operator")
+    print("p_exp")
 
 
 def p_operator(p):
@@ -190,6 +192,7 @@ def p_const(p):
     | TRUE
     | FALSE"""
     print("p_const")
+    print(p[0], p[1])
 
 
 def p_explist(p):
