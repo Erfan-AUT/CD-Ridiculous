@@ -66,7 +66,9 @@ def p_type(p):
 
 def p_iddec(p):
     """iddec : lvalue ASSIGN exp"""
-    CodeGenerator.assign_lvalue(p)
+    if not p[1].is_array:
+        CodeGenerator.assign_lvalue(p)
+    p[0].is_array = p[1].is_array
 
 
 def p_iddec_single(p):
@@ -77,7 +79,10 @@ def p_iddec_single(p):
 def p_idlist(p):
     """idlist : idlist COMMA iddec"""
     p[0] = NonTerminal()
-    p[0].in_place = p[1].replacement() + p[2] + p[3].replacement()
+    p[0].in_place = p[1].replacement() 
+    if not p[3].is_array:
+        p[0].in_place += p[2] + p[3].replacement()
+    pass
 
 
 def p_idlist_single(p):
