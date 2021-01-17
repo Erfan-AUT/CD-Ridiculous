@@ -1,4 +1,3 @@
-import sys
 from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal
@@ -22,8 +21,8 @@ def new_temp():
     return "T" + str(tempCount)
 
 
-def str_to_class(classname):
-    return getattr(sys.modules[__name__], classname)
+# def str_to_class(class_name):
+    # return eval(class_name)
 
 
 ############# Parser Methods ################
@@ -48,7 +47,10 @@ def p_dec(p):
 
 def p_vardec(p):
     "vardec : idlist COLON type SEMICOLON"
-    print("p_vardec")
+    p[0] = NonTerminal()
+    p[0].explicit_type = p[3].explicit_type
+    p[0].code = p[0].explicit_type + " " + p[1].code + p[4]
+    print(p[0].code)
 
 
 def p_funcdec(p):
@@ -61,21 +63,33 @@ def p_type(p):
     """type : INTEGER
     | FLOAT
     | BOOLEAN"""
-    print("p_type")
+    p[0] = NonTerminal()
+    p[0].explicit_type = p[1]
 
 
 def p_iddec(p):
-    """iddec : lvalue
-    | lvalue ASSIGN exp
+    """iddec : lvalue ASSIGN exp
     """
-    print("p_iddec")
+    p[0] = NonTerminal()
+    p[0].code = p[1].code + p[2] + p[3].code
+
+def p_single_iddec(p):
+    "iddec : lvalue" 
+    p[0] = NonTerminal()
+    p[0].code = p[1].code
 
 
 def p_idlist(p):
-    """idlist : iddec
-    | idlist COMMA iddec
+    """idlist : idlist COMMA iddec
     """
     print("p_idlist")
+    p[0] = NonTerminal()
+    p[0].code = p[1].code + p[2] + p[3].code
+
+def p_single_idlist(p):
+    "idlist : iddec"
+    p[0] = NonTerminal()
+    p[0].code = p[1].code
 
 
 def p_paramdecs(p):
@@ -92,14 +106,14 @@ def p_paramdecslist(p):
 
 
 def p_paramdec(p):
-    """paramdec : ID COLON type
-    | ID LSB RSB COLON type"""
+    """paramdec : ID LSB RSB COLON type"""
     print("p_paramdec")
 
 
 def p_single_paramdec(p):
     "paramdec : ID COLON type"
-    
+    pass
+
 
 def p_block(p):
     "block : LCB stmtlist RCB"
@@ -113,11 +127,15 @@ def p_stmtlist(p):
 
 
 def p_lvalue(p):
-    """lvalue : ID
-    | ID LSB exp RSB
+    """lvalue : ID LSB exp RSB
     | ID LRB explist RRB"""
-    print("p_lvalue")
+    p[0] = NonTerminal()
+    p[0].code = p[1] + p[2] + p[3].code + p[4]
 
+def p_single_lvalue(p):
+    "lvalue : ID"
+    p[0] = NonTerminal()
+    p[0].code = p[1]
 
 def p_case(p):
     "case : WHERE const COLON stmtlist"
@@ -185,23 +203,25 @@ def p_relop(p):
 def p_exp(p):
     """exp : exp relop exp %prec LT
     | lvalue %prec OR
-    | LRB exp RRB
     | SUB exp
     | NOT exp"""
     print("p_exp")
 
+def p_rbracket_exp(p):
+    "exp : LRB exp RRB"
+    p[0] = NonTerminal()
+    p[0].code = p[1] + p[2].code + p[3]
 
 def p_lvalue_assign(p):
-    "exp : lvalue ASSiGN exp"
+    "exp : lvalue ASSIGN exp"
     p[0] = NonTerminal()
-
-
-############ CODE GENERATION RULES ##############
+    p[0].code = p[1].code + p[2] + p[3].code
 
 
 def p_expconst(p):
     "exp : const"
-    p[0] = p[1]
+    p[0] = NonTerminal()
+    p[0].value = p[1]
     print("p_expconst")
 
 
