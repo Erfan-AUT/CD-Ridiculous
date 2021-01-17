@@ -2,7 +2,7 @@ from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal
 from .codeGenerator import CodeGenerator
-from .symbolTable import symbol_table, explicit_type
+from .symbolTable import explicit_type, update_symbols
 
 precedence = (
     ("left", "AND", "OR"),
@@ -14,6 +14,7 @@ precedence = (
 )
 
 tempCount = -1
+arrayIndex = 0
 
 
 def new_temp():
@@ -47,9 +48,7 @@ def p_vardec(p):
     p[0] = NonTerminal()
     p_type = p[3]
     for symbol in p[1].replacement().split(','):
-        symbol_table.update({
-            symbol : p_type
-        })
+        update_symbols(symbol, p_type)
     p[0].code = p_type + " " + p[1].replacement() + p[4]
     print(p[0].code)
 
@@ -123,11 +122,8 @@ def p_stmtlist(p):
 
 
 def p_lvalue(p):
-    """lvalue : ID LSB exp RSB
-    | ID LRB explist RRB"""
-    p[0] = NonTerminal()
-    p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
-    # print(p[0].code)
+    """lvalue : ID LRB explist RRB"""
+    pass
 
 
 def p_lvalue_single(p):
@@ -135,6 +131,10 @@ def p_lvalue_single(p):
     p[0] = NonTerminal()
     p[0].value = p[1]
 
+def p_lvalue_array(p):
+    "lvalue : ID LSB exp RSB"
+    p[0] = NonTerminal()
+    p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
 
 def p_case(p):
     "case : WHERE const COLON stmtlist"
