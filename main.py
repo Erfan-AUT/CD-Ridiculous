@@ -4,7 +4,7 @@ with open("tests/code_gen/test0.txt") as file:
     data = file.read()
 
 def main():
-    result = parser.parse(data, lexer=lexer, debug=True)
+    result = parser.parse(data, lexer=lexer, debug=False)
     print(result)
 
 def parser_repl():

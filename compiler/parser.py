@@ -12,6 +12,12 @@ precedence = (
     ("left", "MUL", "DIV", "MOD"),
 )
 
+tempCount = -1
+
+def new_temp():
+    global tempCount
+    tempCount += 1
+    return "T" + str(tempCount)
 
 def p_program(p):
     "program : declist MAIN LRB RRB block"
@@ -165,15 +171,21 @@ def p_relop(p):
 
 def p_exp(p):
     """exp : lvalue ASSIGN exp
-    | exp operator exp %prec AND
     | exp relop exp %prec LT
-    | const
     | lvalue %prec OR
     | LRB exp RRB
     | SUB exp
     | NOT exp"""
     print("p_exp")
 
+def p_expconst(p):
+    "exp : const"
+    p[0] = p[1]
+    print("p_expconst")
+
+def p_binop(p):
+    "exp : exp operator exp %prec AND"
+    CodeGenerator.generate_arithmetic_code(p, new_temp())
 
 def p_operator(p):
     """operator : AND
@@ -183,6 +195,7 @@ def p_operator(p):
     | MUL
     | DIV
     | MOD"""
+    p[0] = p[1]
     print("p_operator")
 
 
@@ -191,8 +204,9 @@ def p_const(p):
     | FLOATNUMBER
     | TRUE
     | FALSE"""
+    p[0] = NonTerminal()
+    p[0].value = p[1]
     print("p_const")
-    print(p[0], p[1])
 
 
 def p_explist(p):
