@@ -3,6 +3,8 @@ from .lex import tokens
 from .nonTerminal import NonTerminal
 from .codeGenerator import CodeGenerator
 from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str
+from .code import code
+
 
 precedence = (
     ("left", "AND", "OR"),
@@ -278,6 +280,10 @@ def p_const(p):
     | FALSE"""
     p[0] = NonTerminal()
     p[0].value = p[1]
+    if p[1] == True:
+        p[0].value = 1
+    elif p[1] == False:
+        p[0].value = 0
     if p.slice[1].type == "INTEGERNUMBER":
         p[0].implicit_type = "int"
     elif p.slice[1].type == "FLOATNUMBER":
