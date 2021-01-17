@@ -1,11 +1,17 @@
 from .nonTerminal import NonTerminal
 from .tables import explicit_type, update_output_table
 
-class CodeGenerator:
 
-    @staticmethod 
+class CodeGenerator:
+    @staticmethod
     def infer_type(p1, p3):
-        return explicit_type(p1) or explicit_type(p3) or p1.implicit_type or p3.implicit_type or "int"
+        return (
+            explicit_type(p1)
+            or explicit_type(p3)
+            or p1.implicit_type
+            or p3.implicit_type
+            or "int"
+        )
 
     @staticmethod
     def arithmetic_code(p, temp):
@@ -41,3 +47,34 @@ class CodeGenerator:
         else:
             p[0].code = p[1] + " 0" + p[3]
         print(p[0].code)
+
+    @staticmethod
+    def if_with_else(p):
+        p[0] = NonTerminal()
+        p[0].code = (
+            "if ("
+            + p[3].value
+            + ") "
+            + p[5].code
+            + " "
+            + p[6].code
+            + " else "
+            + p[8].code
+        )
+
+    @staticmethod
+    def c_type_for(p):
+        p[0] = NonTerminal()
+        p[0].code = (
+            "for (" + p[3].value + ";" + p[5].value + ";" + p[7].value + ") " + p[9].code
+        )
+    
+    @staticmethod
+    def python_type_for(p):
+        p[0] = NonTerminal()
+        p[0].code = "for (" + p[3] + " in " + p[5] + ") " + p[7].code
+
+    @staticmethod
+    def _while(p):
+        p[0] = NonTerminal()
+        p[0].code = "while (" + p[3].value + ") " + p[5].code

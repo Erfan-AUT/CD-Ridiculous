@@ -17,6 +17,7 @@ precedence = (
 
 tempCount = -1
 
+
 def new_temp():
     global tempCount
     tempCount += 1
@@ -47,7 +48,7 @@ def p_vardec(p):
     "vardec : idlist COLON type SEMICOLON"
     p[0] = NonTerminal()
     p_type = p[3]
-    for symbol in p[1].replacement().split(','):
+    for symbol in p[1].replacement().split(","):
         update_symbols(symbol, p_type)
     p[0].code = p_type + " " + p[1].replacement() + p[4]
     print(p[0].code)
@@ -81,7 +82,7 @@ def p_iddec_single(p):
 def p_idlist(p):
     """idlist : idlist COMMA iddec"""
     p[0] = NonTerminal()
-    p[0].in_place = p[1].replacement() 
+    p[0].in_place = p[1].replacement()
     if not p[3].is_array:
         p[0].in_place += p[2] + p[3].replacement()
     pass
@@ -117,13 +118,19 @@ def p_paramdec_single(p):
 
 def p_block(p):
     "block : LCB stmtlist RCB"
-    pass
+    p[0] = NonTerminal()
+    p[0].code = p[1].code
 
 
 def p_stmtlist(p):
-    """stmtlist : stmtlist stmt
-    | eps"""
-    pass
+    "stmtlist : stmtlist stmt"
+    p[0] = NonTerminal()
+    p[0].code = p[1].code + " " + p[2].code
+
+
+def p_stmtlist_eps(p):
+    "stmtlist : eps"
+    p[0] = NonTerminal()
 
 
 def p_lvalue(p):
@@ -136,11 +143,13 @@ def p_lvalue_single(p):
     p[0] = NonTerminal()
     p[0].value = p[1]
 
+
 def p_lvalue_array(p):
     "lvalue : ID LSB exp RSB"
     p[0] = NonTerminal()
     p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
     p[0].is_array = True
+
 
 def p_case(p):
     "case : WHERE const COLON stmtlist"
@@ -157,43 +166,88 @@ def p_cases(p):
 def p_stmt(p):
     """stmt : ostmt
     | cstmt"""
-    pass
+    p[0] = p[1]
 
 
-def p_ostmt(p):
+def p_ostmt_while(p):
+    "ostmt : WHILE LRB exp RRB ostmt"
+    CodeGenerator._while(p)
+
+def p_ostmt_pfor(p):
+    "ostmt : FOR LRB ID IN ID RRB ostmt"
+    CodeGenerator.python_type_for(p)
+
+
+def p_ostmt_cfor(p):
+    "ostmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt"
+    CodeGenerator.c_type_for(p)
+
+
+
+def p_ostmt_ifelse(p):
+    "ostmt : IF LRB exp RRB cstmt elseiflist ELSE ostmt"
+    CodeGenerator.if_with_else(p)
+
+
+def p_ostmt_if(p):
     """ostmt : IF LRB exp RRB cstmt
-    | IF LRB exp RRB ostmt
-    | IF LRB exp RRB cstmt elseiflist ELSE ostmt
-    | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt
-    | FOR LRB ID IN ID RRB ostmt
-    | WHILE LRB exp RRB ostmt
-    """
-    pass
+    | IF LRB exp RRB ostmt"""
+    p[0] = NonTerminal()
+    p[0].code = "if (" + p[3].value + ") " + p[5].code
 
-def p_cstmt(p):
-    """cstmt : simple
-    | IF LRB exp RRB cstmt elseiflist ELSE cstmt
-    | FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt
-    | FOR LRB ID IN ID RRB cstmt
-    | WHILE LRB exp RRB cstmt
-    """
+
+def p_cstmt_while(p):
+    "cstmt : WHILE LRB exp RRB cstmt"
+    CodeGenerator._while(p)
+
+
+def p_cstmt_pfor(p):
+    " cstmt : FOR LRB ID IN ID RRB cstmt"
+    CodeGenerator.python_type_for(p)
+
+
+def p_cstmt_cfor(p):
+    "cstmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt"
+    CodeGenerator.c_type_for(p)
+
+
+def p_cstmt_ifelse(p):
+    "cstmt : IF LRB exp RRB cstmt elseiflist ELSE cstmt"
+    CodeGenerator.if_with_else(p)
+
+
+def p_cstmt_simple(p):
+    "cstmt : simple"
+    p[0] = p[1]
 
 
 def p_elseiflist(p):
-    """elseiflist : elseiflist ELSEIF LRB exp RRB cstmt
-    | eps"""
-    pass
+    "elseiflist : elseiflist ELSEIF LRB exp RRB cstmt"
+    p[0] = NonTerminal()
+    p[0].code = p[1].code + " else (" + p[4].value + ")" + p[5].code
+
+
+def p_elseiflist_eps(p):
+    "elseiflist : eps"
+    p[0] = NonTerminal()
 
 
 def p_simple(p):
     """simple : block
-    | vardec
-    | ON LRB exp RRB LCB cases RCB SEMICOLON"""
+    | vardec"""
     pass
+
+
+def p_simple_switch(p):
+    "simple :  ON LRB exp RRB LCB cases RCB SEMICOLON"
+    p[0] = NonTerminal()
+    p[0].code = "switch (" + p[3].value + ") {" + p[6].code + "}"
+
 
 def p_simple_return(p):
     "simple : RETURN exp SEMICOLON"
     CodeGenerator.simple_simple(p, p[1])
+
 
 def p_simple_semicolon(p):
     "simple : exp SEMICOLON"
@@ -257,6 +311,7 @@ def p_exp_lvalue_assign(p):
         index += init_index
         p[1].value = "array[" + str(index) + "]"
     CodeGenerator.assign_lvalue(p)
+
 
 def p_exp_const(p):
     "exp : const"
