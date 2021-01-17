@@ -2,7 +2,7 @@ from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal
 from .codeGenerator import CodeGenerator
-from .symbolTable import explicit_type, update_symbols
+from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str
 
 precedence = (
     ("left", "AND", "OR"),
@@ -14,8 +14,6 @@ precedence = (
 )
 
 tempCount = -1
-arrayIndex = 0
-
 
 def new_temp():
     global tempCount
@@ -135,6 +133,7 @@ def p_lvalue_array(p):
     "lvalue : ID LSB exp RSB"
     p[0] = NonTerminal()
     p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
+    p[0].is_array = True
 
 def p_case(p):
     "case : WHERE const COLON stmtlist"
@@ -239,6 +238,11 @@ def p_exp_rbracket(p):
 
 def p_exp_lvalue_assign(p):
     "exp : lvalue ASSIGN exp"
+    if p[1].is_array:
+        index, name = index_name_from_str(p[1].value)
+        init_index = get_array_index(name)
+        index += init_index
+        p[1].value = "array[" + str(index) + "]"
     CodeGenerator.assign_lvalue(p)
 
 def p_exp_const(p):

@@ -1,5 +1,5 @@
 from .nonTerminal import NonTerminal
-from .symbolTable import explicit_type
+from .tables import explicit_type
 
 class CodeGenerator:
 
