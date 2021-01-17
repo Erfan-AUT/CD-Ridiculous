@@ -1,3 +1,5 @@
 main () {
     a1, a2, a3: int;
+    print(a1);
+    n2 = n1 / (3 + 2);
 }
