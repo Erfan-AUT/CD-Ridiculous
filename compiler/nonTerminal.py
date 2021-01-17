@@ -4,7 +4,6 @@ class NonTerminal:
         self.code = ""
         self.in_place = ""
         self.implicit_type = ""
-        self.explicit_type = ""
         self.is_array = False
 
     def replacement(self):

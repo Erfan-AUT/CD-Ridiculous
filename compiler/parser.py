@@ -2,6 +2,7 @@ from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal
 from .codeGenerator import CodeGenerator
+from .symbolTable import symbol_table, explicit_type
 
 precedence = (
     ("left", "AND", "OR"),
@@ -43,8 +44,13 @@ def p_dec(p):
 
 def p_vardec(p):
     "vardec : idlist COLON type SEMICOLON"
-    p[0] = p[3]
-    p[0].code = p[0].explicit_type + " " + p[1].code + p[4]
+    p[0] = NonTerminal()
+    p_type = p[3]
+    for symbol in p[1].replacement().split(','):
+        symbol_table.update({
+            symbol : p_type
+        })
+    p[0].code = p_type + " " + p[1].replacement() + p[4]
     print(p[0].code)
 
 
@@ -58,14 +64,20 @@ def p_type(p):
     """type : INTEGER
     | FLOAT
     | BOOLEAN"""
-    p[0] = NonTerminal()
-    p[0].explicit_type = p[1]
+    p[0] = p[1]
 
 
 def p_iddec(p):
     """iddec : lvalue ASSIGN exp"""
     p[0] = NonTerminal()
-    p[0].code = p[1].code + p[2] + p[3].code
+    p_type = str(explicit_type(p[1])) + " "
+    if p_type:
+        p_type = ""
+    else:
+        p_type = p[1].implicit_type + " "
+    p[0].code = p_type + p[1].value + p[2] + p[3].replacement()
+    p[0].value = p[1].value
+    print(p[0].code)
 
 
 def p_iddec_single(p):
@@ -76,7 +88,7 @@ def p_iddec_single(p):
 def p_idlist(p):
     """idlist : idlist COMMA iddec"""
     p[0] = NonTerminal()
-    p[0].code = p[1].code + p[2] + p[3].code
+    p[0].in_place = p[1].replacement() + p[2] + p[3].replacement()
 
 
 def p_idlist_single(p):
@@ -122,13 +134,14 @@ def p_lvalue(p):
     """lvalue : ID LSB exp RSB
     | ID LRB explist RRB"""
     p[0] = NonTerminal()
-    p[0].code = p[1] + p[2] + p[3].code + p[4]
+    p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
+    # print(p[0].code)
 
 
 def p_lvalue_single(p):
     "lvalue : ID"
     p[0] = NonTerminal()
-    p[0].code = p[1]
+    p[0].value = p[1]
 
 
 def p_case(p):
@@ -187,7 +200,7 @@ def p_print(p):
     "simple : PRINT LRB ID RRB SEMICOLON"
     p[0] = NonTerminal()
     p[0].code = """printf("%d", {});""".format(p[3])
-    pass
+    print(p[0].code)
 
 
 def p_relop(p):
@@ -213,31 +226,37 @@ def p_exp_lvalue(p):
 def p_exp_minus(p):
     "exp : SUB exp"
     p[0] = NonTerminal()
-    p[0].code = "-" + p[2].code
+    p[0].code = "-" + p[2].replacement()
 
 
 def p_exp_not(p):
     "exp : NOT exp"
     p[0] = NonTerminal()
-    p[0].code = "!" + p[2].code
+    p[0].code = "!" + p[2].replacement()
 
 
 def p_exp_rbracket(p):
     "exp : LRB exp RRB"
-    p[0] = NonTerminal()
-    p[0].code = p[1] + p[2].code + p[3]
+    # TODO: This if is only for unseen circumstances, should such events lack to present themselves, remove it.
+    if " " in p[2].replacement():
+        p[0] = NonTerminal()
+        p[0].in_place = p[1] + p[2].replacement() + p[3]
+    else:
+        p[0] = p[2]
 
 
 def p_exp_lvalue_assign(p):
     "exp : lvalue ASSIGN exp"
     p[0] = NonTerminal()
-    p[0].code = p[1].code + p[2] + p[3].code
+    p[0].in_place = p[1].replacement()
+    p[0].implicit_type = CodeGenerator.imply_type(p[1], p[3])
+    p[0].code = p[0].implicit_type + " " + p[0].in_place + ";"
+    print(p[0].code)
 
 
 def p_exp_const(p):
     "exp : const"
-    p[0] = NonTerminal()
-    p[0].value = p[1]
+    p[0] = p[1]
 
 
 def p_exp_binop(p):
@@ -264,11 +283,11 @@ def p_const(p):
     p[0] = NonTerminal()
     p[0].value = p[1]
     if p.slice[1].type == "INTEGERNUMBER":
-        p[0].implicit_type = int
+        p[0].implicit_type = "int"
     elif p.slice[1].type == "FLOATNUMBER":
-        p[0].implicit_type = float
+        p[0].implicit_type = "float"
     else:
-        p[0].implicit_type = bool
+        p[0].implicit_type = "bool"
 
 
 def p_explist(p):
