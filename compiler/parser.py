@@ -168,7 +168,7 @@ def p_ostmt(p):
     | FOR LRB ID IN ID RRB ostmt
     | WHILE LRB exp RRB ostmt
     """
-
+    pass
 
 def p_cstmt(p):
     """cstmt : simple
@@ -186,11 +186,17 @@ def p_elseiflist(p):
 
 
 def p_simple(p):
-    """simple : RETURN exp SEMICOLON
-    | exp SEMICOLON
-    | block
+    """simple : block
     | vardec
     | ON LRB exp RRB LCB cases RCB SEMICOLON"""
+    pass
+
+def p_simple_return(p):
+    "simple : RETURN exp SEMICOLON"
+    CodeGenerator.simple_simple(p, p[1])
+
+def p_simple_semicolon(p):
+    "simple : exp SEMICOLON"
     pass
 
 
@@ -208,12 +214,12 @@ def p_relop(p):
     | LE
     | EQ
     | NE"""
-    pass
+    p[0] = p[1]
 
 
 def p_exp(p):
     """exp : exp relop exp %prec LT"""
-    pass
+    CodeGenerator.arithmetic_code(p, new_temp())
 
 
 def p_exp_lvalue(p):
@@ -224,13 +230,13 @@ def p_exp_lvalue(p):
 def p_exp_minus(p):
     "exp : SUB exp"
     p[0] = NonTerminal()
-    p[0].code = "-" + p[2].replacement()
+    p[0].value = "-" + p[2].replacement()
 
 
 def p_exp_not(p):
     "exp : NOT exp"
     p[0] = NonTerminal()
-    p[0].code = "!" + p[2].replacement()
+    p[0].value = "!" + p[2].replacement()
 
 
 def p_exp_rbracket(p):

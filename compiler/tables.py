@@ -8,6 +8,7 @@ class SymbolRow:
 
 
 symbol_table = {}
+output_table = {}
 
 
 def explicit_type(p):
@@ -19,7 +20,11 @@ def explicit_type(p):
 
 def update_symbols(item, p_type, arrayIndex=None):
     symbol_table.update({item: SymbolRow(p_type, arrayIndex)})
+    if not arrayIndex:
+        update_output_table(item, p_type)
 
+def update_output_table(item, p_type):
+    output_table.update({item: p_type})
 
 ##### Array Table #####
 
