@@ -178,13 +178,16 @@ def p_exp(p):
     | NOT exp"""
     print("p_exp")
 
+
+############ CODE GENERATION RULES ##############
+
 def p_expconst(p):
     "exp : const"
     p[0] = p[1]
     print("p_expconst")
 
 def p_binop(p):
-    "exp : exp operator exp %prec AND"
+    "exp : exp operator exp %prec MUL"
     CodeGenerator.generate_arithmetic_code(p, new_temp())
 
 def p_operator(p):
