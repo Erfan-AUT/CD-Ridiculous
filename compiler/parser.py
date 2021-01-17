@@ -69,15 +69,7 @@ def p_type(p):
 
 def p_iddec(p):
     """iddec : lvalue ASSIGN exp"""
-    p[0] = NonTerminal()
-    p_type = str(explicit_type(p[1])) + " "
-    if p_type:
-        p_type = ""
-    else:
-        p_type = p[1].implicit_type + " "
-    p[0].code = p_type + p[1].value + p[2] + p[3].replacement()
-    p[0].value = p[1].value
-    print(p[0].code)
+    CodeGenerator.assign_lvalue(p)
 
 
 def p_iddec_single(p):
@@ -247,12 +239,7 @@ def p_exp_rbracket(p):
 
 def p_exp_lvalue_assign(p):
     "exp : lvalue ASSIGN exp"
-    p[0] = NonTerminal()
-    p[0].in_place = p[1].replacement()
-    p[0].implicit_type = CodeGenerator.imply_type(p[1], p[3])
-    p[0].code = p[0].implicit_type + " " + p[0].in_place + ";"
-    print(p[0].code)
-
+    CodeGenerator.assign_lvalue(p)
 
 def p_exp_const(p):
     "exp : const"

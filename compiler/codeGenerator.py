@@ -30,3 +30,15 @@ class CodeGenerator:
     @staticmethod
     def assign_explicit_type(p):
         pass
+
+    @staticmethod
+    def assign_lvalue(p):
+        p[0] = NonTerminal()
+        p_type = str(explicit_type(p[1])) + " "
+        if p_type:
+            p_type = ""
+        else:
+            p_type = p[1].implicit_type + " "
+        p[0].code = p_type + p[1].value + p[2] + p[3].replacement() + ";"
+        p[0].value = p[1].value
+        print(p[0].code)
