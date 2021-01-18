@@ -47,6 +47,10 @@ class CodeGenerator:
         p[0].code = p[3].code
         p[0].code += p_type + p[1].value + p[2] + p[3].replacement() + ";"
         p[0].value = p[1].value
+        if p[3].value != "":
+            p[0].iddec_assigns.update({
+                p[0].value : p[3].value
+            })
         # print(p[0].code)
 
     @staticmethod

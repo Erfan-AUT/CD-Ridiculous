@@ -35,6 +35,12 @@ def p_program(p):
         print("p_program")
     p[0] = NonTerminal()
     p[0].code = "int " + ",".join(list_variables()) + ";"
+    # Remove trailing whitespace and brackets
+    p[5].code = p[5].code.strip()
+    p[5].code = p[5].code[1:-1]
+    for key, value in p[1].iddec_assigns.items():
+        p[5].code = key + "=" + str(value) + ";" + p[5].code
+    p[5].code = "{" + p[5].code + "}"
     p[0].code += "int main()" + p[5].code
     with open("tests/code_gen/out0.c", "w") as text_file:
         text_file.write(p[0].code)
@@ -44,6 +50,8 @@ def p_declist_mult(p):
     "declist : declist dec"
     p[0] = NonTerminal()
     p[0].code = p[2].code
+    p[0].iddec_assigns = {**p[1].iddec_assigns, **p[2].iddec_assigns}
+    # p[0].iddec_assigns = p[1].iddec_assigns + p[2].iddec_assigns
     try:
         p[0] += " " + p[1].code
     except:
@@ -69,6 +77,7 @@ def p_dec(p):
 def p_vardec(p):
     "vardec : idlist COLON type SEMICOLON"
     p[0] = NonTerminal()
+    p[0].iddec_assigns = p[1].iddec_assigns
     p_type = p[3]
     for symbol in p[1].replacement().split(","):
         update_symbols(symbol, p_type)
@@ -120,6 +129,7 @@ def p_idlist(p):
     """idlist : idlist COMMA iddec"""
     p[0] = NonTerminal()
     p[0].in_place = p[1].replacement()
+    p[0].iddec_assigns = {**p[1].iddec_assigns, **p[3].iddec_assigns}
     if not p[3].is_array:
         p[0].in_place += p[2] + p[3].replacement()
     p[0].code = p[0].in_place

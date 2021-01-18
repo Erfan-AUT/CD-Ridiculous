@@ -6,6 +6,7 @@ class NonTerminal:
         self.implicit_type = ""
         self.is_array = False
         self.relop_parts = []
+        self.iddec_assigns = {}
 
     def replacement(self):
         return str(self.value if self.value else self.in_place)
