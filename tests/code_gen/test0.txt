@@ -4,6 +4,7 @@ main()
     n1 = 20 - 10 / 2;
     n2 = n1 / (3 + 2);
     n3 = n1 * n2 - 10;
+    n4 : int;
     print(n1);
     print(n2);
     print(n3);

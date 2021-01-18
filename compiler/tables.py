@@ -26,6 +26,13 @@ def update_symbols(item, p_type, arrayIndex=None):
 def update_output_table(item, p_type):
     output_table.update({item: p_type})
 
+def list_variables():
+    variables = []
+    for key, value in output_table.items():
+        variables.append(key)
+    return variables
+
+
 ##### Array Table #####
 
 arrayIndex = 0

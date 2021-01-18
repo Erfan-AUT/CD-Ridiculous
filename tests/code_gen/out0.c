@@ -1,4 +1,4 @@
-int n1, n2, n3;
+int n1, n2, n3, T0, T1, T2, T3, T4, T5, n4, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15;
 int main()
 {
     T0 = 20 - 10;

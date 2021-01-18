@@ -2,7 +2,7 @@ from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal
 from .codeGenerator import CodeGenerator
-from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str
+from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str, list_variables
 from .code import code
 
 DEBUG = True
@@ -34,7 +34,8 @@ def p_program(p):
     if DEBUG:
         print("p_program")
     p[0] = NonTerminal()
-    p[0].code = p[1].code + "int main()" + p[5].code
+    p[0].code = "int " + ",".join(list_variables()) + ";"
+    p[0].code += "int main()" + p[5].code
     with open("tests/code_gen/out0.c", "w") as text_file:
         text_file.write(p[0].code)
     # print(p[0].code)
@@ -71,7 +72,7 @@ def p_vardec(p):
     p_type = p[3]
     for symbol in p[1].replacement().split(","):
         update_symbols(symbol, p_type)
-    p[0].code = p_type + " " + p[1].replacement() + p[4]
+    # p[0].code = p_type + " " + p[1].replacement() + p[4]
     if PRINT_CODE:
         print(p[0].code)
     if DEBUG:
