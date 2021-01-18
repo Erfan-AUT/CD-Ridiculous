@@ -6,6 +6,7 @@ from .tables import explicit_type, update_symbols, get_array_index, index_name_f
 from .code import code
 
 DEBUG = True
+PRINT_CODE = False
 
 precedence = (
     ("left", "AND", "OR"),
@@ -32,18 +33,34 @@ def p_program(p):
     "program : declist MAIN LRB RRB block"
     if DEBUG:
         print("p_program")
+    p[0] = NonTerminal()
+    p[0].code = p[1].code + "int main()" + p[5].code
+    with open("tests/code_gen/out0.c", "w") as text_file:
+        text_file.write(p[0].code)
+    # print(p[0].code)
 
-
-def p_declist(p):
-    """declist : declist dec
-    | eps"""  # eps is equal to epsilon
+def p_declist_mult(p):
+    "declist : declist dec"
+    p[0] = NonTerminal()
+    p[0].code = p[2].code
+    try:
+        p[0] += " " + p[1].code
+    except:
+        pass
     if DEBUG:
         print("p_declist")
+
+def p_declist(p):
+    """declist : eps"""
+    p[0] = NonTerminal()
+    if DEBUG:
+        print("p_declist_eps")
     
 
 def p_dec(p):
     """dec : vardec
     | funcdec"""
+    p[0] = p[1]
     if DEBUG:
         print("p_dec")
     
@@ -55,7 +72,8 @@ def p_vardec(p):
     for symbol in p[1].replacement().split(","):
         update_symbols(symbol, p_type)
     p[0].code = p_type + " " + p[1].replacement() + p[4]
-    # print(p[0].code)
+    if PRINT_CODE:
+        print(p[0].code)
     if DEBUG:
         print("p_vardec")
 
@@ -103,6 +121,7 @@ def p_idlist(p):
     p[0].in_place = p[1].replacement()
     if not p[3].is_array:
         p[0].in_place += p[2] + p[3].replacement()
+    p[0].code = p[0].in_place
     if DEBUG:
         print("p_idlist")
     
@@ -150,14 +169,14 @@ def p_paramdec_single(p):
 def p_block(p):
     "block : LCB stmtlist RCB"
     p[0] = NonTerminal()
-    p[0].code = p[2].code
+    p[0].code = "{" + p[2].code + "}"
     if DEBUG:
         print("p_block")
 
 
 
 def p_stmtlist(p):
-    "stmtlist : stmtlist stmt"
+    "stmtlist : stmtlist stmt %prec MUL"
     p[0] = NonTerminal()
     try:
         p[0].code = p[1].code + " " + p[2].code
@@ -187,6 +206,7 @@ def p_lvalue_single(p):
     "lvalue : ID"
     p[0] = NonTerminal()
     p[0].value = p[1]
+    p[0].code = p[1]
     if DEBUG:
         print("p_lvalue_id")
 
@@ -352,15 +372,17 @@ def p_simple_return(p):
 
 def p_simple_semicolon(p):
     "simple : exp SEMICOLON"
+    p[0] = p[1]
     if DEBUG:
-        print("p_simple_return")
+        print("p_simple_semicolon")
 
 
 def p_print(p):
     "simple : PRINT LRB ID RRB SEMICOLON"
     p[0] = NonTerminal()
     p[0].code = """printf("%d", {});""".format(p[3])
-    # print(p[0].code)
+    if PRINT_CODE:
+        print(p[0].code)
     if DEBUG:
         print("p_print")
 
@@ -399,6 +421,7 @@ def p_exp_minus(p):
     "exp : SUB exp"
     p[0] = NonTerminal()
     p[0].value = "-" + p[2].replacement()
+    p[0].code = p[0].value
     if DEBUG:
         print("p_exp_minus")
 
@@ -408,6 +431,7 @@ def p_exp_not(p):
     "exp : NOT exp"
     p[0] = NonTerminal()
     p[0].value = "!" + p[2].replacement()
+    p[0].code = p[0].value
     if DEBUG:
         print("p_exp_not")
 
@@ -419,6 +443,7 @@ def p_exp_rbracket(p):
     if " " in p[2].replacement():
         p[0] = NonTerminal()
         p[0].in_place = p[1] + p[2].replacement() + p[3]
+        p[0].code = p[0].in_place
     else:
         p[0] = p[2]
 
@@ -511,7 +536,7 @@ def p_eps(p):
 def p_error(p):
     if p:
         raise Exception("ParsingError: invalid grammar at ", p)
-    
+
     if DEBUG:
         print("p_error")
 

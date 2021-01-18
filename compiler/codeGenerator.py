@@ -19,7 +19,8 @@ class CodeGenerator:
         p[0].in_place = temp
         update_output_table(temp, "int")
         # p[0].implicit_type = CodeGenerator.infer_type(p[1], p[3])
-        p[0].code = (
+        p[0].code = p[1].code
+        p[0].code += (
             p[0].in_place
             + " = "
             + p[1].replacement()
@@ -43,7 +44,8 @@ class CodeGenerator:
             p_type = ""
         else:
             p_type = p[1].implicit_type + " "
-        p[0].code = p_type + p[1].value + p[2] + p[3].replacement() + ";"
+        p[0].code = p[3].code
+        p[0].code += p_type + p[1].value + p[2] + p[3].replacement() + ";"
         p[0].value = p[1].value
         # print(p[0].code)
 
@@ -61,7 +63,7 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].code = (
             "if ("
-            + p[3].value
+            + p[3].replacement()
             + ") "
             + p[5].code
             + " "
@@ -69,6 +71,7 @@ class CodeGenerator:
             + " else "
             + p[8].code
         )
+        # print(p[0].code)
 
     @staticmethod
     def c_type_for(p):
@@ -99,5 +102,5 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].in_place = p[3].replacement()
         update_output_table(temp, "int")
-        # p[0].code = temp + " = " + p[1].bool_replacement() + " " + p[2] + " "  +  p[3].replacement() + ";"
-        # p[0].code += p[1].
+        p[0].value = p[1].bool_replacement() + " " + p[2] + " "  +  p[3].replacement() 
+        p[0].code = temp + " = " + p[0].value + ";"
