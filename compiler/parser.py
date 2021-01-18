@@ -119,13 +119,16 @@ def p_paramdec_single(p):
 def p_block(p):
     "block : LCB stmtlist RCB"
     p[0] = NonTerminal()
-    p[0].code = p[1].code
+    p[0].code = p[2].code
 
 
 def p_stmtlist(p):
     "stmtlist : stmtlist stmt"
     p[0] = NonTerminal()
-    p[0].code = p[1].code + " " + p[2].code
+    try:
+        p[0].code = p[1].code + " " + p[2].code
+    except:
+        pass
 
 
 def p_stmtlist_eps(p):
@@ -271,9 +274,10 @@ def p_relop(p):
     p[0] = p[1]
 
 
-def p_exp(p):
+def p_exp_relop(p):
     """exp : exp relop exp %prec LT"""
     CodeGenerator.arithmetic_code(p, new_temp())
+    p[0].is_relop = True
 
 
 def p_exp_lvalue(p):
