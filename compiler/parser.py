@@ -1,6 +1,6 @@
 from ply.yacc import yacc
 from .lex import tokens
-from .nonTerminal import NonTerminal
+from .nonTerminal import NonTerminal, new_temp
 from .codeGenerator import CodeGenerator
 from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str, list_variables
 from .code import code
@@ -16,15 +16,6 @@ precedence = (
     ("left", "SUM", "SUB"),
     ("left", "MUL", "DIV", "MOD"),
 )
-
-tempCount = -1
-
-
-def new_temp():
-    global tempCount
-    tempCount += 1
-    return "T" + str(tempCount)
-
 
 ############# Parser Methods ################
 

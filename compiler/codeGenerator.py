@@ -1,6 +1,5 @@
-from .nonTerminal import NonTerminal
+from .nonTerminal import NonTerminal, new_temp
 from .tables import explicit_type, update_output_table
-
 
 class CodeGenerator:
     @staticmethod
@@ -66,9 +65,17 @@ class CodeGenerator:
     def if_with_else(p):
         p[0] = NonTerminal()
         p[0].code = p[3].code
+        extra = p[3].relop_parts
+        if len(extra) > 1:
+            last_temp = new_temp()
+            p[0].code += last_temp + "=" + extra.pop() + "&&" + extra.pop() + ";"
+            for i in range(len(extra)):
+                n_temp = new_temp()
+                p[0].code += n_temp + "=" + last_temp + "&&" + extra.pop() + ";"
+                last_temp = n_temp
         p[0].code += (
             "if ("
-            + p[3].replacement()
+            + last_temp
             + ") "
             + p[5].code
             + " "
@@ -76,7 +83,6 @@ class CodeGenerator:
             + " else "
             + p[8].code
         )
-        # print(p[0].code)
 
     @staticmethod
     def c_type_for(p):

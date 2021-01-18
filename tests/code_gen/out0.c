@@ -9,7 +9,11 @@ int main()
     T4 = n2 * n2;
     T5 = T4 * n2;
     T6 = n1 <= T5;
-    if (n1 <= T5)
+    T9 = T0 && T1;
+    T10 = T9 && T2;
+    T11 = T10 && T3;
+    T12 = T11 && T6;
+    if (T12)
         while (n2)
         {
             T7 = n3 + 1;
