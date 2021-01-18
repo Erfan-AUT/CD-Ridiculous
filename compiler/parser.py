@@ -411,7 +411,8 @@ def p_exp_relop(p):
 
 def p_exp_lvalue(p):
     "exp : lvalue %prec OR"
-    p[0] = p[1]
+    p[0] = NonTerminal()
+    p[0].value = p[1].value
     if DEBUG:
         print("p_exp_lvalue")
 
