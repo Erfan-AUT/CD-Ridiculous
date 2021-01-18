@@ -2,6 +2,25 @@ from .nonTerminal import NonTerminal, new_temp
 from .tables import explicit_type, update_output_table
 
 class CodeGenerator:
+
+    @staticmethod
+    def inverse_relop(rp):
+        if rp == ">":
+            return "<="
+        elif rp == "<":
+            return ">="
+        elif rp == "<=":
+            return ">"
+        elif rp == ">=":
+            return "<"
+        elif rp == "<=":
+            return ">"
+        elif rp == "==":
+            return "!="
+        elif rp == "!=":
+            return "=="
+        return rp
+
     @staticmethod
     def infer_type(p1, p3):
         return (
@@ -62,29 +81,19 @@ class CodeGenerator:
         # print(p[0].code)
 
     @staticmethod
-    def if_preliminaries(p):
+    def if_(p):
         p[0] = NonTerminal()
         p[0].code = p[3].code
         extra = p[3].relop_parts
-        last_temp = ""
-        if len(extra) > 1:
-            last_temp = new_temp()
-            p[0].code += "if (" + extra.pop() + "&&" + extra.pop() + ")"
-            for i in range(len(extra)):
-                n_temp = new_temp()
-                p[0].code += "if (" + last_temp + "&&" + extra.pop() + ")"
-                last_temp = n_temp
-        return last_temp or p[3].replacement()
+        for _ in range(len(extra)):
+            p[0].code += "if (" + extra.pop() + ")"
+        p[0].code += p[5].code
 
     @staticmethod
     def if_with_else(p):
-        condition = CodeGenerator.if_preliminaries(p)
+        CodeGenerator.if_(p)
         p[0].code += (
-            "if ("
-            + condition
-            + ") "
-            + p[5].code
-            + " "
+            " "
             + p[6].code
             + " else "
             + p[8].code
@@ -115,10 +124,10 @@ class CodeGenerator:
         p[0].code = "while (" + p[3].value + ") " + p[5].code
 
     @staticmethod
-    def boolean(p, temp):
+    def boolean(p):
         p[0] = NonTerminal()
         p[0].in_place = p[3].replacement()
-        update_output_table(temp, "int")
-        p[0].relop_parts = [temp] + p[1].relop_parts + p[3].relop_parts
-        p[0].value = p[1].bool_replacement() + " " + p[2] + " "  +  p[3].replacement() 
-        p[0].code = p[1].code + p[3].code + temp + " = " + p[0].value + ";"
+        # update_output_table(temp, "int")
+        p[0].relop_parts = [p[1].bool_replacement() + " " + CodeGenerator.inverse_relop(p[2]) + " "  +  p[3].replacement() ] + p[1].relop_parts + p[3].relop_parts
+        # p[0].value = 
+        p[0].code = p[1].code + p[3].code #+ temp + " = " + p[0].value + ";"

@@ -283,8 +283,7 @@ def p_ostmt_ifelse(p):
 def p_ostmt_if(p):
     """ostmt : IF LRB exp RRB cstmt
     | IF LRB exp RRB ostmt"""
-    condition = CodeGenerator.if_preliminaries(p)
-    p[0].code = "if (" + condition + ") " + p[5].code
+    CodeGenerator.if_(p)
     if DEBUG:
         print("p_ostmt_if")
 
@@ -405,7 +404,7 @@ def p_relop(p):
 
 def p_exp_relop(p):
     """exp : exp relop exp %prec LT"""
-    CodeGenerator.boolean(p, new_temp())
+    CodeGenerator.boolean(p)
     if DEBUG:
         print("p_exp_relop")
 
