@@ -5,10 +5,10 @@ class NonTerminal:
         self.in_place = ""
         self.implicit_type = ""
         self.is_array = False
-        self.relop_rhs = ""
+        self.relop_parts = []
 
     def replacement(self):
         return str(self.value if self.value else self.in_place)
 
     def bool_replacement(self):
-        return str(self.relop_rhs) if self.relop_rhs else self.replacement()
+        return str(self.value.split()[-1]) if self.value else self.in_place()

@@ -491,6 +491,10 @@ def p_operator(p):
     | MUL
     | DIV
     | MOD"""
+    if p[1] == "and":
+        p[1] = "&&"
+    elif p[1] == "or":
+        p[1] = "||"
     p[0] = p[1]
     if DEBUG:
         print("p_operator")

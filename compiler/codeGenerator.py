@@ -61,7 +61,8 @@ class CodeGenerator:
     @staticmethod
     def if_with_else(p):
         p[0] = NonTerminal()
-        p[0].code = (
+        p[0].code = p[3].code
+        p[0].code += (
             "if ("
             + p[3].replacement()
             + ") "
@@ -102,5 +103,6 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].in_place = p[3].replacement()
         update_output_table(temp, "int")
+        p[0].relop_parts = [temp] + p[1].relop_parts + p[3].relop_parts
         p[0].value = p[1].bool_replacement() + " " + p[2] + " "  +  p[3].replacement() 
-        p[0].code = temp + " = " + p[0].value + ";"
+        p[0].code = p[1].code + p[3].code + temp + " = " + p[0].value + ";"
