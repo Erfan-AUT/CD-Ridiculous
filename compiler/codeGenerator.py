@@ -14,14 +14,22 @@ class CodeGenerator:
         )
 
     @staticmethod
-    def arithmetic_code(p, temp):
+    def arithmetic(p, temp):
         p[0] = NonTerminal()
         p[0].in_place = temp
         update_output_table(temp, "int")
         # p[0].implicit_type = CodeGenerator.infer_type(p[1], p[3])
-        p[0].code = p[0].in_place + " = "
-        p[0].code += p[1].replacement() + " " + p[2] + " " + p[3].replacement() + ";"
-        print(p[0].code)
+        p[0].code = (
+            p[0].in_place
+            + " = "
+            + p[1].replacement()
+            + " "
+            + p[2]
+            + " "
+            + p[3].replacement()
+            + ";"
+        )
+        # print(p[0].code)
 
     @staticmethod
     def assign_explicit_type(p):
@@ -37,7 +45,7 @@ class CodeGenerator:
             p_type = p[1].implicit_type + " "
         p[0].code = p_type + p[1].value + p[2] + p[3].replacement() + ";"
         p[0].value = p[1].value
-        print(p[0].code)
+        # print(p[0].code)
 
     @staticmethod
     def simple_simple(p, ret=""):
@@ -46,7 +54,7 @@ class CodeGenerator:
             p[0].code = p[1] + " " + str(p[2].value) + p[3]
         else:
             p[0].code = p[1] + " 0" + p[3]
-        print(p[0].code)
+        # print(p[0].code)
 
     @staticmethod
     def if_with_else(p):
@@ -66,9 +74,16 @@ class CodeGenerator:
     def c_type_for(p):
         p[0] = NonTerminal()
         p[0].code = (
-            "for (" + p[3].value + ";" + p[5].value + ";" + p[7].value + ") " + p[9].code
+            "for ("
+            + p[3].value
+            + ";"
+            + p[5].value
+            + ";"
+            + p[7].value
+            + ") "
+            + p[9].code
         )
-    
+
     @staticmethod
     def python_type_for(p):
         p[0] = NonTerminal()
@@ -78,3 +93,11 @@ class CodeGenerator:
     def _while(p):
         p[0] = NonTerminal()
         p[0].code = "while (" + p[3].value + ") " + p[5].code
+
+    @staticmethod
+    def boolean(p, temp):
+        p[0] = NonTerminal()
+        p[0].in_place = p[3].replacement()
+        update_output_table(temp, "int")
+        # p[0].code = temp + " = " + p[1].bool_replacement() + " " + p[2] + " "  +  p[3].replacement() + ";"
+        # p[0].code += p[1].

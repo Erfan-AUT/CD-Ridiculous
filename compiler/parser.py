@@ -5,6 +5,7 @@ from .codeGenerator import CodeGenerator
 from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str
 from .code import code
 
+DEBUG = True
 
 precedence = (
     ("left", "AND", "OR"),
@@ -29,20 +30,23 @@ def new_temp():
 
 def p_program(p):
     "program : declist MAIN LRB RRB block"
-    pass
+    if DEBUG:
+        print("p_program")
 
 
 def p_declist(p):
     """declist : declist dec
     | eps"""  # eps is equal to epsilon
-    pass
-
+    if DEBUG:
+        print("p_declist")
+    
 
 def p_dec(p):
     """dec : vardec
     | funcdec"""
-    pass
-
+    if DEBUG:
+        print("p_dec")
+    
 
 def p_vardec(p):
     "vardec : idlist COLON type SEMICOLON"
@@ -51,13 +55,18 @@ def p_vardec(p):
     for symbol in p[1].replacement().split(","):
         update_symbols(symbol, p_type)
     p[0].code = p_type + " " + p[1].replacement() + p[4]
-    print(p[0].code)
+    # print(p[0].code)
+    if DEBUG:
+        print("p_vardec")
+
 
 
 def p_funcdec(p):
     """funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
     | FUNCTION ID LRB paramdecs RRB block"""
-    pass
+    if DEBUG:
+        print("p_funcdec")
+    
 
 
 def p_type(p):
@@ -65,6 +74,9 @@ def p_type(p):
     | FLOAT
     | BOOLEAN"""
     p[0] = p[1]
+    if DEBUG:
+        print("p_type")
+
 
 
 def p_iddec(p):
@@ -72,11 +84,17 @@ def p_iddec(p):
     if not p[1].is_array:
         CodeGenerator.assign_lvalue(p)
     p[0].is_array = p[1].is_array
+    if DEBUG:
+        print("p_iddec")
+
 
 
 def p_iddec_single(p):
     "iddec : lvalue"
     p[0] = p[1]
+    if DEBUG:
+        print("p_iddec_single")
+
 
 
 def p_idlist(p):
@@ -85,41 +103,57 @@ def p_idlist(p):
     p[0].in_place = p[1].replacement()
     if not p[3].is_array:
         p[0].in_place += p[2] + p[3].replacement()
-    pass
+    if DEBUG:
+        print("p_idlist")
+    
 
 
 def p_idlist_single(p):
     "idlist : iddec"
     p[0] = p[1]
+    if DEBUG:
+        print("p_idlist_single")
+
 
 
 def p_paramdecs(p):
     """paramdecs : paramdecslist
     | eps"""
-    pass
+    if DEBUG:
+        print("p_paramdecs")
+
 
 
 def p_paramdecslist(p):
     """paramdecslist : paramdec
     | paramdecslist COMMA paramdec
     """
-    pass
+    if DEBUG:
+        print("p_paramdecslist")
+    
 
 
 def p_paramdec(p):
     """paramdec : ID LSB RSB COLON type"""
-    pass
+    if DEBUG:
+        print("p_paramdec")
+
 
 
 def p_paramdec_single(p):
     "paramdec : ID COLON type"
-    pass
+    if DEBUG:
+        print("p_paramdec_single")
+
 
 
 def p_block(p):
     "block : LCB stmtlist RCB"
     p[0] = NonTerminal()
     p[0].code = p[2].code
+    if DEBUG:
+        print("p_block")
+
 
 
 def p_stmtlist(p):
@@ -129,22 +163,33 @@ def p_stmtlist(p):
         p[0].code = p[1].code + " " + p[2].code
     except:
         pass
+    if DEBUG:
+        print("p_stmtlist")
+
 
 
 def p_stmtlist_eps(p):
     "stmtlist : eps"
     p[0] = NonTerminal()
+    if DEBUG:
+        print("p_stmtlist_eps")
 
 
-def p_lvalue(p):
+
+def p_lvalue_call(p):
     """lvalue : ID LRB explist RRB"""
-    pass
+    if DEBUG:
+        print("p_lvalue_call")
+
 
 
 def p_lvalue_single(p):
     "lvalue : ID"
     p[0] = NonTerminal()
     p[0].value = p[1]
+    if DEBUG:
+        print("p_lvalue_id")
+
 
 
 def p_lvalue_array(p):
@@ -152,44 +197,65 @@ def p_lvalue_array(p):
     p[0] = NonTerminal()
     p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
     p[0].is_array = True
+    if DEBUG:
+        print("p_lvalue_array")
+
 
 
 def p_case(p):
     "case : WHERE const COLON stmtlist"
-    pass
+    if DEBUG:
+        print("p_case")
+
 
 
 def p_cases(p):
     """cases : cases case
     | eps
     """
-    pass
-
+    if DEBUG:
+        print("p_cases")
+    
 
 def p_stmt(p):
     """stmt : ostmt
     | cstmt"""
     p[0] = p[1]
+    if DEBUG:
+        print("p_stmt")
+
 
 
 def p_ostmt_while(p):
     "ostmt : WHILE LRB exp RRB ostmt"
     CodeGenerator._while(p)
+    if DEBUG:
+        print("p_ostmt_while")
+
 
 def p_ostmt_pfor(p):
     "ostmt : FOR LRB ID IN ID RRB ostmt"
     CodeGenerator.python_type_for(p)
+    if DEBUG:
+        print("p_ostmt_pfor")
+
 
 
 def p_ostmt_cfor(p):
     "ostmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt"
     CodeGenerator.c_type_for(p)
+    if DEBUG:
+        print("p_ostmt_cfor")
+
 
 
 
 def p_ostmt_ifelse(p):
     "ostmt : IF LRB exp RRB cstmt elseiflist ELSE ostmt"
     CodeGenerator.if_with_else(p)
+    if DEBUG:
+        print("p_ostmt_ifelse")
+
 
 
 def p_ostmt_if(p):
@@ -197,71 +263,107 @@ def p_ostmt_if(p):
     | IF LRB exp RRB ostmt"""
     p[0] = NonTerminal()
     p[0].code = "if (" + p[3].value + ") " + p[5].code
+    if DEBUG:
+        print("p_ostmt_if")
+
 
 
 def p_cstmt_while(p):
     "cstmt : WHILE LRB exp RRB cstmt"
     CodeGenerator._while(p)
+    if DEBUG:
+        print("p_cstmt_while")
 
 
 def p_cstmt_pfor(p):
     " cstmt : FOR LRB ID IN ID RRB cstmt"
     CodeGenerator.python_type_for(p)
+    if DEBUG:
+        print("p_cstmt_pfor")
+
 
 
 def p_cstmt_cfor(p):
     "cstmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt"
     CodeGenerator.c_type_for(p)
+    if DEBUG:
+        print("p_cstmt_cfor")
+
 
 
 def p_cstmt_ifelse(p):
     "cstmt : IF LRB exp RRB cstmt elseiflist ELSE cstmt"
     CodeGenerator.if_with_else(p)
+    if DEBUG:
+        print("p_cstmt_ifelse")
+
 
 
 def p_cstmt_simple(p):
     "cstmt : simple"
     p[0] = p[1]
+    if DEBUG:
+        print("p_cstmt_simple")
+
 
 
 def p_elseiflist(p):
     "elseiflist : elseiflist ELSEIF LRB exp RRB cstmt"
     p[0] = NonTerminal()
     p[0].code = p[1].code + " else (" + p[4].value + ")" + p[5].code
+    if DEBUG:
+        print("p_elseiflist")
+
 
 
 def p_elseiflist_eps(p):
     "elseiflist : eps"
     p[0] = NonTerminal()
+    if DEBUG:
+        print("p_elseiflist_eps")
+
 
 
 def p_simple(p):
     """simple : block
     | vardec"""
-    pass
+    p[0] = p[1]
+    if DEBUG:
+        print("p_simple")
+
 
 
 def p_simple_switch(p):
     "simple :  ON LRB exp RRB LCB cases RCB SEMICOLON"
     p[0] = NonTerminal()
     p[0].code = "switch (" + p[3].value + ") {" + p[6].code + "}"
+    if DEBUG:
+        print("p_simple_switch")
+
 
 
 def p_simple_return(p):
     "simple : RETURN exp SEMICOLON"
     CodeGenerator.simple_simple(p, p[1])
+    if DEBUG:
+        print("p_simple_return")
+
 
 
 def p_simple_semicolon(p):
     "simple : exp SEMICOLON"
-    pass
+    if DEBUG:
+        print("p_simple_return")
 
 
 def p_print(p):
     "simple : PRINT LRB ID RRB SEMICOLON"
     p[0] = NonTerminal()
     p[0].code = """printf("%d", {});""".format(p[3])
-    print(p[0].code)
+    # print(p[0].code)
+    if DEBUG:
+        print("p_print")
+
 
 
 def p_relop(p):
@@ -272,29 +374,43 @@ def p_relop(p):
     | EQ
     | NE"""
     p[0] = p[1]
+    if DEBUG:
+        print("p_relop")
+
 
 
 def p_exp_relop(p):
     """exp : exp relop exp %prec LT"""
-    CodeGenerator.arithmetic_code(p, new_temp())
-    p[0].is_relop = True
+    CodeGenerator.boolean(p, new_temp())
+    if DEBUG:
+        print("p_exp_relop")
+
 
 
 def p_exp_lvalue(p):
     "exp : lvalue %prec OR"
     p[0] = p[1]
+    if DEBUG:
+        print("p_exp_lvalue")
+
 
 
 def p_exp_minus(p):
     "exp : SUB exp"
     p[0] = NonTerminal()
     p[0].value = "-" + p[2].replacement()
+    if DEBUG:
+        print("p_exp_minus")
+
 
 
 def p_exp_not(p):
     "exp : NOT exp"
     p[0] = NonTerminal()
     p[0].value = "!" + p[2].replacement()
+    if DEBUG:
+        print("p_exp_not")
+
 
 
 def p_exp_rbracket(p):
@@ -306,6 +422,10 @@ def p_exp_rbracket(p):
     else:
         p[0] = p[2]
 
+    if DEBUG:
+        print("p_exp_rbracket")
+    
+
 
 def p_exp_lvalue_assign(p):
     "exp : lvalue ASSIGN exp"
@@ -315,16 +435,25 @@ def p_exp_lvalue_assign(p):
         index += init_index
         p[1].value = "array[" + str(index) + "]"
     CodeGenerator.assign_lvalue(p)
+    if DEBUG:
+        print("p_exp_lvalue_assign")
+
 
 
 def p_exp_const(p):
     "exp : const"
     p[0] = p[1]
+    if DEBUG:
+        print("p_exp_const")
+    
 
 
 def p_exp_binop(p):
     "exp : exp operator exp %prec MUL"
-    CodeGenerator.arithmetic_code(p, new_temp())
+    CodeGenerator.arithmetic(p, new_temp())
+    if DEBUG:
+        print("p_exp_binop")
+
 
 
 def p_operator(p):
@@ -336,6 +465,9 @@ def p_operator(p):
     | DIV
     | MOD"""
     p[0] = p[1]
+    if DEBUG:
+        print("p_operator")
+
 
 
 def p_const(p):
@@ -356,22 +488,33 @@ def p_const(p):
     else:
         p[0].implicit_type = "bool"
 
+    if DEBUG:
+        print("p_const")
+
 
 def p_explist(p):
     """explist : exp
     | explist COMMA exp
     | eps"""
-    pass
+    if DEBUG:
+        print("p_explist")
+
 
 
 def p_eps(p):
     "eps :"
-    pass
+    if DEBUG:
+        print("p_eps")
+
 
 
 def p_error(p):
     if p:
         raise Exception("ParsingError: invalid grammar at ", p)
+    
+    if DEBUG:
+        print("p_error")
+
 
 
 parser = yacc()
