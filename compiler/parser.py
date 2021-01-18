@@ -283,8 +283,8 @@ def p_ostmt_ifelse(p):
 def p_ostmt_if(p):
     """ostmt : IF LRB exp RRB cstmt
     | IF LRB exp RRB ostmt"""
-    p[0] = NonTerminal()
-    p[0].code = "if (" + p[3].value + ") " + p[5].code
+    condition = CodeGenerator.if_preliminaries(p)
+    p[0].code = "if (" + condition + ") " + p[5].code
     if DEBUG:
         print("p_ostmt_if")
 

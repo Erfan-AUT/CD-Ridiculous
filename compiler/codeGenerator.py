@@ -62,20 +62,26 @@ class CodeGenerator:
         # print(p[0].code)
 
     @staticmethod
-    def if_with_else(p):
+    def if_preliminaries(p):
         p[0] = NonTerminal()
         p[0].code = p[3].code
         extra = p[3].relop_parts
+        last_temp = ""
         if len(extra) > 1:
             last_temp = new_temp()
-            p[0].code += last_temp + "=" + extra.pop() + "&&" + extra.pop() + ";"
+            p[0].code += "if (" + extra.pop() + "&&" + extra.pop() + ")"
             for i in range(len(extra)):
                 n_temp = new_temp()
-                p[0].code += n_temp + "=" + last_temp + "&&" + extra.pop() + ";"
+                p[0].code += "if (" + last_temp + "&&" + extra.pop() + ")"
                 last_temp = n_temp
+        return last_temp or p[3].replacement()
+
+    @staticmethod
+    def if_with_else(p):
+        condition = CodeGenerator.if_preliminaries(p)
         p[0].code += (
             "if ("
-            + last_temp
+            + condition
             + ") "
             + p[5].code
             + " "
