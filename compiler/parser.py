@@ -219,7 +219,13 @@ def p_lvalue_single(p):
 def p_lvalue_array(p):
     "lvalue : ID LSB exp RSB"
     p[0] = NonTerminal()
-    p[0].value = "array" + p[2] + p[3].replacement() + p[4]
+    index = p[3].value
+    name = p[1]
+    init_index = get_array_index(name)
+    new_index = new_temp()
+    update_output_table(new_index, "int")
+    p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
+    p[0].value = "array" + p[2] + new_index + p[4]
     p[0].is_array = True
     if DEBUG:
         print("p_lvalue_array")
