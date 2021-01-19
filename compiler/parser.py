@@ -2,7 +2,13 @@ from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal, new_temp, new_label
 from .codeGenerator import CodeGenerator
-from .tables import explicit_type, update_symbols, get_array_index, list_variables, update_output_table
+from .tables import (
+    explicit_type,
+    update_symbols,
+    get_array_index,
+    list_variables,
+    update_output_table,
+)
 from .code import code
 
 DEBUG = True
@@ -37,6 +43,7 @@ def p_program(p):
         text_file.write(p[0].code)
     # print(p[0].code)
 
+
 def p_declist_mult(p):
     "declist : declist dec"
     p[0] = NonTerminal()
@@ -50,20 +57,21 @@ def p_declist_mult(p):
     if DEBUG:
         print("p_declist_mult" + " : " + p[0].code)
 
+
 def p_declist(p):
     """declist : eps"""
     p[0] = NonTerminal()
     if DEBUG:
         print("p_declist_eps")
-    
+
 
 def p_dec(p):
     """dec : vardec
     | funcdec"""
     p[0] = p[1]
     if DEBUG:
-        print("p_dec"  + " : " + p[0].code)
-    
+        print("p_dec" + " : " + p[0].code)
+
 
 def p_vardec(p):
     "vardec : idlist COLON type SEMICOLON"
@@ -78,16 +86,14 @@ def p_vardec(p):
     if PRINT_CODE:
         print(p[0].code)
     if DEBUG:
-        print("p_vardec"+ " : " + p[0].code)
-
+        print("p_vardec" + " : " + p[0].code)
 
 
 def p_funcdec(p):
     """funcdec : FUNCTION ID LRB paramdecs RRB COLON type block
     | FUNCTION ID LRB paramdecs RRB block"""
     if DEBUG:
-        print("p_funcdec"+  + " : " + p[0].code)
-    
+        print("p_funcdec" + +" : " + p[0].code)
 
 
 def p_type(p):
@@ -97,7 +103,6 @@ def p_type(p):
     p[0] = p[1]
     if DEBUG:
         print("p_type" + " : " + p[0])
-
 
 
 def p_iddec(p):
@@ -113,13 +118,11 @@ def p_iddec(p):
         print("p_iddec" + " : " + p[0].code)
 
 
-
 def p_iddec_single(p):
     "iddec : lvalue"
     p[0] = p[1]
     if DEBUG:
         print("p_iddec_single" + " : " + p[0].code)
-
 
 
 def p_idlist(p):
@@ -133,7 +136,6 @@ def p_idlist(p):
     # p[0].code += p[0].in_place
     if DEBUG:
         print("p_idlist" + " : " + p[0].code)
-    
 
 
 def p_idlist_single(p):
@@ -143,13 +145,11 @@ def p_idlist_single(p):
         print("p_idlist_single" + " : " + p[0].code)
 
 
-
 def p_paramdecs(p):
     """paramdecs : paramdecslist
     | eps"""
     if DEBUG:
         print("p_paramdecs" + " : " + p[0].code)
-
 
 
 def p_paramdecslist(p):
@@ -158,7 +158,6 @@ def p_paramdecslist(p):
     """
     if DEBUG:
         print("p_paramdecslist" + " : " + p[0].code)
-    
 
 
 def p_paramdec(p):
@@ -167,12 +166,10 @@ def p_paramdec(p):
         print("p_paramdec" + " : " + p[0].code)
 
 
-
 def p_paramdec_single(p):
     "paramdec : ID COLON type"
     if DEBUG:
         print("p_paramdec_single" + " : " + p[0].code)
-
 
 
 def p_block(p):
@@ -180,7 +177,6 @@ def p_block(p):
     p[0] = p[2]
     if DEBUG:
         print("p_block" + " : " + p[0].code)
-
 
 
 def p_stmtlist(p):
@@ -194,13 +190,11 @@ def p_stmtlist(p):
         print("p_stmtlist" + " : " + p[0].code)
 
 
-
 def p_stmtlist_eps(p):
     "stmtlist : eps"
     p[0] = NonTerminal()
     if DEBUG:
         print("p_stmtlist_eps" + " : " + p[0].code)
-
 
 
 def p_lvalue_call(p):
@@ -209,14 +203,12 @@ def p_lvalue_call(p):
         print("p_lvalue_call" + " : " + p[0].code)
 
 
-
 def p_lvalue_single(p):
     "lvalue : ID"
     p[0] = NonTerminal()
     p[0].value = p[1]
     if DEBUG:
         print("p_lvalue_id" + " : " + p[0].code)
-
 
 
 def p_lvalue_array(p):
@@ -236,21 +228,25 @@ def p_lvalue_array(p):
         print("p_lvalue_array" + " : " + p[0].code)
 
 
-
 def p_case(p):
     "case : WHERE const COLON stmtlist"
+    p[0].value = p[2]
+    p[0].code = p[4].code
     if DEBUG:
         print("p_case" + " : " + p[0].code)
 
 
-
 def p_cases(p):
-    """cases : cases case
-    | eps
-    """
+    "cases : cases case"
     if DEBUG:
         print("p_cases" + " : " + p[0].code)
-    
+
+
+def p_cases_empty(p):
+    "cases : eps"
+    if DEBUG:
+        print("p_cases_empty" + " : " + p[0].code)
+
 
 def p_stmt(p):
     """stmt : ostmt
@@ -258,7 +254,6 @@ def p_stmt(p):
     p[0] = p[1]
     if DEBUG:
         print("p_stmt" + " : " + p[0].code)
-
 
 
 def p_ostmt_while(p):
@@ -275,14 +270,11 @@ def p_ostmt_pfor(p):
         print("p_ostmt_pfor" + " : " + p[0].code)
 
 
-
 def p_ostmt_cfor(p):
     "ostmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB ostmt"
     CodeGenerator.c_type_for(p)
     if DEBUG:
         print("p_ostmt_cfor" + " : " + p[0].code)
-
-
 
 
 def p_ostmt_ifelse(p):
@@ -292,14 +284,12 @@ def p_ostmt_ifelse(p):
         print("p_ostmt_ifelse" + " : " + p[0].code)
 
 
-
 def p_ostmt_if(p):
     """ostmt : IF LRB exp RRB cstmt
     | IF LRB exp RRB ostmt"""
     CodeGenerator.if_(p)
     if DEBUG:
         print("p_ostmt_if" + " : " + p[0].code)
-
 
 
 def p_cstmt_while(p):
@@ -316,13 +306,11 @@ def p_cstmt_pfor(p):
         print("p_cstmt_pfor" + " : " + p[0].code)
 
 
-
 def p_cstmt_cfor(p):
     "cstmt : FOR LRB exp SEMICOLON exp SEMICOLON exp RRB cstmt"
     CodeGenerator.c_type_for(p)
     if DEBUG:
         print("p_cstmt_cfor" + " : " + p[0].code)
-
 
 
 def p_cstmt_ifelse(p):
@@ -332,13 +320,11 @@ def p_cstmt_ifelse(p):
         print("p_cstmt_ifelse" + " : " + p[0].code)
 
 
-
 def p_cstmt_simple(p):
     "cstmt : simple"
     p[0] = p[1]
     if DEBUG:
         print("p_cstmt_simple" + " : " + p[0].code)
-
 
 
 def p_elseiflist(p):
@@ -349,13 +335,11 @@ def p_elseiflist(p):
         print("p_elseiflist" + " : " + p[0].code)
 
 
-
 def p_elseiflist_eps(p):
     "elseiflist : eps"
     p[0] = NonTerminal()
     if DEBUG:
         print("p_elseiflist_eps" + " : " + p[0].code)
-
 
 
 def p_simple(p):
@@ -366,7 +350,6 @@ def p_simple(p):
         print("p_simple" + " : " + p[0].code)
 
 
-
 def p_simple_switch(p):
     "simple :  ON LRB exp RRB LCB cases RCB SEMICOLON"
     p[0] = NonTerminal()
@@ -375,13 +358,11 @@ def p_simple_switch(p):
         print("p_simple_switch" + " : " + p[0].code)
 
 
-
 def p_simple_return(p):
     "simple : RETURN exp SEMICOLON"
     CodeGenerator.simple_simple(p, p[1])
     if DEBUG:
         print("p_simple_return" + " : " + p[0].code)
-
 
 
 def p_simple_semicolon(p):
@@ -401,7 +382,6 @@ def p_print(p):
         print("p_print" + " : " + p[0].code)
 
 
-
 def p_relop(p):
     """relop : GT
     | GE
@@ -414,7 +394,6 @@ def p_relop(p):
         print("p_relop" + " : " + p[0])
 
 
-
 def p_exp_relop(p):
     """exp : exp relop exp %prec MUL"""
     CodeGenerator.boolean(p)
@@ -422,13 +401,11 @@ def p_exp_relop(p):
         print("p_exp_relop" + " : " + p[0].code)
 
 
-
 def p_exp_lvalue(p):
     "exp : lvalue %prec OR"
     p[0] = p[1]
     if DEBUG:
         print("p_exp_lvalue" + " : " + p[0].code)
-
 
 
 def p_exp_minus(p):
@@ -440,7 +417,6 @@ def p_exp_minus(p):
         print("p_exp_minus" + " : " + p[0].code)
 
 
-
 def p_exp_not(p):
     "exp : NOT exp"
     p[0] = NonTerminal()
@@ -448,7 +424,6 @@ def p_exp_not(p):
     p[0].code = p[0].value
     if DEBUG:
         print("p_exp_not" + " : " + p[0].code)
-
 
 
 def p_exp_rbracket(p):
@@ -463,7 +438,6 @@ def p_exp_rbracket(p):
 
     if DEBUG:
         print("p_exp_rbracket" + " : " + p[0].code)
-    
 
 
 def p_exp_lvalue_assign(p):
@@ -473,13 +447,11 @@ def p_exp_lvalue_assign(p):
         print("p_exp_lvalue_assign" + " : " + p[0].code)
 
 
-
 def p_exp_const(p):
     "exp : const"
     p[0] = p[1]
     if DEBUG:
         print("p_exp_const" + " : " + p[0].code)
-    
 
 
 def p_exp_binop(p):
@@ -490,7 +462,6 @@ def p_exp_binop(p):
         CodeGenerator.arithmetic(p, new_temp())
     if DEBUG:
         print("p_exp_binop" + " : " + p[0].code)
-
 
 
 def p_operator(p):
@@ -504,7 +475,6 @@ def p_operator(p):
     p[0] = p[1]
     if DEBUG:
         print("p_operator" + " : " + p[0])
-
 
 
 def p_const(p):
@@ -531,12 +501,10 @@ def p_explist(p):
         print("p_explist" + " : " + p[0].code)
 
 
-
 def p_eps(p):
     "eps :"
     if DEBUG:
         print("p_eps")
-
 
 
 def p_error(p):
@@ -545,7 +513,6 @@ def p_error(p):
 
     if DEBUG:
         print("p_error")
-
 
 
 parser = yacc()

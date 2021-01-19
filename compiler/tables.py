@@ -1,6 +1,5 @@
 #### Symbol Table ####
 
-
 class SymbolRow:
     def __init__(self, p_type=None, arrayIndex=None):
         self.p_type = p_type
@@ -41,13 +40,21 @@ array_table = {}
 
 def new_array(name, size):
     global arrayIndex
-    array_table.update({name: arrayIndex})
+    array_table.update({name: [arrayIndex, size]})
     arrayIndex += size
 
 
 def get_array_index(name):
-    return array_table.get(name) or 0
+    row = array_table.get(name)
+    if row:
+        return row[0]
+    return 0
 
+def get_array_size(name):
+    row = array_table.get(name)
+    if row:
+        row[1]
+    return 1
 
 def index_name_from_str(string):
     start = string.find("[") + 1
