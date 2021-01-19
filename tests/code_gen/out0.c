@@ -24,18 +24,19 @@ int main()
         goto L1;
     if (n1 > T7)
         goto L1;
-    while (n2)
-    {
-        T8 = n3 + 1;
-        n3 = T8;
-        T9 = n2 - 1;
-        n2 = T9;
-    }
+L0:
+    if (n2 == 0)
+        goto L1;
+    T8 = n3 + 1;
+    n3 = T8;
+    T9 = n2 - 1;
+    n2 = T9;
+    goto L0;
 L1:
     if (n2 >= 3)
-        goto L0;
+        goto L2;
     n2 = 80;
-L0:
+L2:
     printf("%d", n1);
     printf("%d", n2);
     printf("%d", n3);

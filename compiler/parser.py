@@ -26,9 +26,7 @@ def p_program(p):
         print("p_program")
     p[0] = NonTerminal()
     p[0].code = "int " + ",".join(list_variables()) + ";"
-    # Remove trailing whitespace and brackets
-    p[5].code = p[5].code.strip()
-    p[5].code = p[5].code[1:-1]
+    CodeGenerator.strip_brackets(p[5])
     for key, value in p[1].iddec_assigns.items():
         p[5].code = key + "=" + str(value) + ";" + p[5].code
     p[5].code = "{" + p[5].code + "}"
@@ -250,7 +248,7 @@ def p_stmt(p):
 
 def p_ostmt_while(p):
     "ostmt : WHILE LRB exp RRB ostmt"
-    CodeGenerator._while(p)
+    CodeGenerator.while_(p)
     if DEBUG:
         print("p_ostmt_while")
 
@@ -291,7 +289,7 @@ def p_ostmt_if(p):
 
 def p_cstmt_while(p):
     "cstmt : WHILE LRB exp RRB cstmt"
-    CodeGenerator._while(p)
+    CodeGenerator.while_(p)
     if DEBUG:
         print("p_cstmt_while")
 

@@ -3,8 +3,16 @@ from .tables import explicit_type, update_output_table
 
 
 class CodeGenerator:
+
+    @staticmethod
+    def strip_brackets(p):
+            # Remove trailing whitespace and brackets
+        p.code = p.code.strip()
+        p.code = p.code[1:-1]
+
     @staticmethod
     def inverse_relop(rp):
+        rp = rp.strip()
         if rp == ">":
             return "<="
         elif rp == "<":
@@ -19,6 +27,8 @@ class CodeGenerator:
             return "!="
         elif rp == "!=":
             return "=="
+        elif rp.rfind(" ") == -1:
+            return rp + "==0"
         return rp
 
     @staticmethod
@@ -91,7 +101,7 @@ class CodeGenerator:
         p[0].code = p[3].code
         extra = p[3].relop_parts
         last_label = CodeGenerator.last_label(p[5])
-
+        prev_label = last_label
         for _ in range(len(extra)):
             p[0].code += "if (" + extra.pop() + ")"
             label = ""
@@ -103,12 +113,14 @@ class CodeGenerator:
                 last_label = label
 
         p[0].code += p[5].code
-        p[0].code += last_label + ": "
+        if not prev_label:
+            p[0].code += last_label + ": "
 
     @staticmethod
     def if_with_else(p):
         CodeGenerator.if_(p)
         p[0].code += " " + p[6].code + " " + p[8].code
+
 
     @staticmethod
     def c_type_for(p):
@@ -130,15 +142,27 @@ class CodeGenerator:
         p[0].code = "for (" + p[3] + " in " + p[5] + ") " + p[7].code
 
     @staticmethod
-    def _while(p):
+    def while_(p):
         p[0] = NonTerminal()
-        p[0].code = "while (" + p[3].value + ") " + p[5].code
+        last_label = CodeGenerator.last_label(p[5])
+        l1, l2 = new_label(), ""
+        if last_label:
+            l2 = last_label
+        else:
+            l2 = new_label()
+        p[0].code += l1 + ": "
+        CodeGenerator.strip_brackets(p[5])
+        p[3].value = CodeGenerator.inverse_relop(p[3].value)
+        p[0].code += "if (" + p[3].value + ") " + "goto " + l2 + ";"
+        p[0].code += p[5].code
+        p[0].code += "goto " + l1 + ";"
+        if l2 != last_label:
+            p[0].code += l2 + ": "
 
     @staticmethod
     def boolean(p):
         p[0] = NonTerminal()
         p[0].in_place = p[3].replacement()
-        # update_output_table(temp, "int")
         p[0].relop_parts = (
             [
                 p[1].bool_replacement()
