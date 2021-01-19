@@ -6,13 +6,6 @@ from .tables import explicit_type, update_output_table, index_name_from_str, get
 class CodeGenerator:
 
     @staticmethod
-    def strip_brackets(p):
-        # Remove trailing whitespace and brackets
-        p.code = p.code.strip()
-        if p.code[0] == "{" and p.code[-1] == "}":
-            p.code = p.code[1:-1]
-
-    @staticmethod
     def inverse_relop(rp):
         rp = rp.strip()
         if rp == ">":
@@ -47,8 +40,6 @@ class CodeGenerator:
         return (
             explicit_type(p1)
             or explicit_type(p3)
-            or p1.implicit_type
-            or p3.implicit_type
             or "int"
         )
 
@@ -57,7 +48,6 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].in_place = temp
         update_output_table(temp, "int")
-        # p[0].implicit_type = CodeGenerator.infer_type(p[1], p[3])
         p[0].code = p[1].code + p[3].code
         p[0].code += (
             p[0].in_place
@@ -136,7 +126,7 @@ class CodeGenerator:
         p[0].code += p[3].code
         l1, l2, last_label = CodeGenerator.loop_labels(p[9])
         p[0].code += l1 + ": "
-        CodeGenerator.strip_brackets(p[9])
+        # CodeGenerator.strip_brackets(p[9])
         p[5].value = ";".join(p[5].relop_parts).strip()
         p[0].code += "if (" + p[5].value + ")" + "goto " + l2 + ";"
         p[0].code += p[9].code + p[7].code
@@ -154,7 +144,7 @@ class CodeGenerator:
         p[0] = NonTerminal()
         l1, l2, last_label = CodeGenerator.loop_labels(p[5])
         p[0].code += l1 + ": "
-        CodeGenerator.strip_brackets(p[5])
+        # CodeGenerator.strip_brackets(p[5])
         p[3].value = CodeGenerator.inverse_relop(p[3].value)
         p[0].code += "if (" + p[3].value + ") " + "goto " + l2 + ";"
         p[0].code += p[5].code

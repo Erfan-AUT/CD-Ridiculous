@@ -19,7 +19,6 @@ class NonTerminal:
         self.value = ""
         self.code = ""
         self.in_place = ""
-        self.implicit_type = ""
         self.is_array = False
         self.relop_parts = []
         self.iddec_assigns = {}

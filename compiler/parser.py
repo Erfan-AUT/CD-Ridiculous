@@ -28,7 +28,6 @@ def p_program(p):
     vars = list_variables()
     if len(vars) > 0:
         p[0].code = "int " + ",".join(list_variables()) + ";"
-    CodeGenerator.strip_brackets(p[5])
     for key, value in p[1].iddec_assigns.items():
         p[5].code = key + "=" + str(value) + ";" + p[5].code
     p[5].code = "{" + p[5].code + "}"
@@ -172,8 +171,7 @@ def p_paramdec_single(p):
 
 def p_block(p):
     "block : LCB stmtlist RCB"
-    p[0] = NonTerminal()
-    p[0].code = "{" + p[2].code + "}"
+    p[0] = p[2]
     if DEBUG:
         print("p_block")
 
@@ -515,12 +513,6 @@ def p_const(p):
         p[0].value = 1
     elif p[1] == False:
         p[0].value = 0
-    if p.slice[1].type == "INTEGERNUMBER":
-        p[0].implicit_type = "int"
-    elif p.slice[1].type == "FLOATNUMBER":
-        p[0].implicit_type = "float"
-    else:
-        p[0].implicit_type = "bool"
 
     if DEBUG:
         print("p_const")
