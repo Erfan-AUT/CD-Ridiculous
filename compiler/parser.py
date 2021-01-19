@@ -478,7 +478,10 @@ def p_exp_const(p):
 
 def p_exp_binop(p):
     "exp : exp operator exp %prec SUM"
-    CodeGenerator.arithmetic(p, new_temp())
+    if p[2] == "or" or p[2] == "and":
+        CodeGenerator.bool_arithmetic(p, new_temp())
+    else:
+        CodeGenerator.arithmetic(p, new_temp())
     if DEBUG:
         print("p_exp_binop" + " : " + p[0].code)
 
@@ -492,10 +495,6 @@ def p_operator(p):
     | MUL
     | DIV
     | MOD"""
-    if p[1] == "and":
-        p[1] = "&&"
-    elif p[1] == "or":
-        p[1] = "||"
     p[0] = p[1]
     if DEBUG:
         print("p_operator" + " : " + p[0])

@@ -44,16 +44,42 @@ class CodeGenerator:
         )
 
     @staticmethod
-    def arithmetic(p, temp):
+    def arith_basics(p, temp):
         p[0] = NonTerminal()
-        p[0].in_place = temp
         update_output_table(temp, "int")
         if ";" in p[1].code:
             p[0].code += p[1].code
         if ";" in p[3].code:
             p[0].code += p[3].code
-        if p[2] == "||":
-            c = 1
+
+    @staticmethod
+    def bool_arithmetic(p, temp):
+        CodeGenerator.arith_basics(p, temp)
+        # TODO: This place is prone to forward duplicate labels, fix it!
+        l1, label = new_label(), ""
+        p[0].code += p[1].code + p[3].code
+        for item in p[1].relop_parts:
+            p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
+
+        if (p[2] == "and"):
+            label = l1
+            for item in p[3].relop_parts:
+                p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
+        else:
+            label = new_label()
+            p[0].code += l1 + ": "
+            for item in p[3].relop_parts:
+                p[0].code += "if (" + item + ")" + "goto " + label + ";"
+
+        p[0].code += label + ": "
+        p[0].bool_gen = True
+        
+
+
+    @staticmethod
+    def arithmetic(p, temp):
+        CodeGenerator.arith_basics(p, temp)
+        p[0].in_place = temp
         p[0].code += (
             p[0].in_place
             + " = "
@@ -64,7 +90,8 @@ class CodeGenerator:
             + p[3].replacement()
             + ";"
         )
-        # print(p[0].code)
+
+
 
     @staticmethod
     def assign_explicit_type(p):
@@ -167,17 +194,17 @@ class CodeGenerator:
             update_output_table(new_index, "int")
             p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
             p[1].value = "array[" + new_index + "]"
-        label = ""
-        if p[3].relop_parts:
-            # TODO: This place is prone to forward duplicate labels, fix it!
-            label = new_label()
-            p[0].code += p[3].code
-            p[0].code += p[1].code + "=0;" 
-            for item in p[3].relop_parts:
-                p[0].code += "if (" + item + ")" + "goto " + label + ";"
-            p[0].code += p[1].code + "=1;"
-            p[0].code += label + ": "
-            
+        
+        if p[3].bool_gen:
+            p[0].code += p[1].value + "= 0;"
+            last_semi = p[3].code.rfind(";") + 1
+            p[0].code += p[3].code[:last_semi]
+            p[0].code += p[1].value + "= 1;"
+            p[0].code += p[3].code[last_semi:]
+        elif p[3].relop_parts:
+            p[1] = NonTerminal()
+            p[2] = "and"
+            CodeGenerator.bool_arithmetic(p, new_temp())
         else:
             CodeGenerator.assign_lvalue(p)
 

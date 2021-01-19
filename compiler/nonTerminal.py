@@ -22,6 +22,7 @@ class NonTerminal:
         self.is_array = False
         self.relop_parts = []
         self.iddec_assigns = {}
+        self.bool_gen = False
 
     def replacement(self):
         return str(self.value if self.value != "" else self.in_place)
