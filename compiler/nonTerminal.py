@@ -1,11 +1,17 @@
 from collections import OrderedDict
 
 tempCount = -1
+labelCount = -1
 
 def new_temp():
     global tempCount
     tempCount += 1
     return "T" + str(tempCount)
+
+def new_label():
+    global labelCount
+    labelCount += 1
+    return "L" + str(labelCount)
 
 
 class NonTerminal:

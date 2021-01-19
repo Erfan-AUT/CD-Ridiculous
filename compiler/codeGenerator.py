@@ -1,4 +1,4 @@
-from .nonTerminal import NonTerminal, new_temp
+from .nonTerminal import NonTerminal, new_temp, new_label
 from .tables import explicit_type, update_output_table
 
 class CodeGenerator:
@@ -20,6 +20,16 @@ class CodeGenerator:
         elif rp == "!=":
             return "=="
         return rp
+
+
+    @staticmethod
+    def last_label(p):
+        code = p.code
+        start = code.rfind(';') + 1
+        end = code.rfind(":")
+        if end > -1:
+            return code[start:end]
+        return ""
 
     @staticmethod
     def infer_type(p1, p3):
@@ -69,7 +79,6 @@ class CodeGenerator:
             p[0].iddec_assigns.update({
                 p[0].value : p[3].value
             })
-        # print(p[0].code)
 
     @staticmethod
     def simple_simple(p, ret=""):
@@ -78,7 +87,7 @@ class CodeGenerator:
             p[0].code = p[1] + " " + str(p[2].value) + p[3]
         else:
             p[0].code = p[1] + " 0" + p[3]
-        # print(p[0].code)
+
 
     @staticmethod
     def if_(p):
@@ -87,7 +96,16 @@ class CodeGenerator:
         extra = p[3].relop_parts
         for _ in range(len(extra)):
             p[0].code += "if (" + extra.pop() + ")"
-        p[0].code += p[5].code
+        
+        last_label = CodeGenerator.last_label(p[5])
+        if last_label:
+            p[0].code += "goto " + last_label + ";"
+            p[0].code += p[5].code
+        else:
+            label = new_label()
+            p[0].code += "goto " + label + ";"
+            p[0].code += p[5].code
+            p[0].code += label + ": "
 
     @staticmethod
     def if_with_else(p):
