@@ -31,7 +31,7 @@ def p_program(p):
         p[5].code = key + "=" + str(value) + ";" + p[5].code
     p[5].code = "{" + p[5].code + "}"
     p[0].code += "int main()" + p[5].code
-    with open("tests/code_gen/out0.c", "w") as text_file:
+    with open("tests/code_gen/out1.c", "w") as text_file:
         text_file.write(p[0].code)
     # print(p[0].code)
 
@@ -215,7 +215,7 @@ def p_lvalue_single(p):
 def p_lvalue_array(p):
     "lvalue : ID LSB exp RSB"
     p[0] = NonTerminal()
-    p[0].value = p[1] + p[2] + p[3].replacement() + p[4]
+    p[0].value = "array" + p[2] + p[3].replacement() + p[4]
     p[0].is_array = True
     if DEBUG:
         print("p_lvalue_array")

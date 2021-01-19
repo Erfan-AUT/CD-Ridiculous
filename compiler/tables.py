@@ -52,4 +52,7 @@ def get_array_index(name):
 def index_name_from_str(string):
     start = string.find("[") + 1
     finish = string.find("]")
-    return int(string[start:finish]), string[0 : start - 1]
+    result = string[start:finish]
+    if result.isdigit():
+        result = int(result)
+    return result, string[0 : start - 1]

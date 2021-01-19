@@ -15,7 +15,7 @@ import sys
 
 from compiler import lexer, parser
 
-with open("tests/code_gen/test0.txt") as file:
+with open("tests/code_gen/test1.txt") as file:
     data = file.read()
 
 def main():

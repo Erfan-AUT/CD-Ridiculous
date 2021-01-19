@@ -125,16 +125,19 @@ class CodeGenerator:
     @staticmethod
     def c_type_for(p):
         p[0] = NonTerminal()
-        p[0].code = (
-            "for ("
-            + p[3].value
-            + ";"
-            + p[5].value
-            + ";"
-            + p[7].value
-            + ") "
-            + p[9].code
-        )
+        p[0].code += p[3].value
+        p[0].code += "if (" + p[7].value + ")"
+        p[0].code += p[9].code + p[5].code
+        # p[0].code = (
+        #     "for ("
+        #     + p[3].value
+        #     + ";"
+        #     + p[5].value
+        #     + ";"
+        #     + p[7].value
+        #     + ") "
+        #     + p[9].code
+        # )
 
     @staticmethod
     def python_type_for(p):
