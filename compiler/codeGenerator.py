@@ -1,8 +1,8 @@
 from .nonTerminal import NonTerminal, new_temp, new_label
 from .tables import explicit_type, update_output_table
 
-class CodeGenerator:
 
+class CodeGenerator:
     @staticmethod
     def inverse_relop(rp):
         if rp == ">":
@@ -21,11 +21,10 @@ class CodeGenerator:
             return "=="
         return rp
 
-
     @staticmethod
     def last_label(p):
         code = p.code
-        start = code.rfind(';') + 1
+        start = code.rfind(";") + 1
         end = code.rfind(":")
         if end > -1:
             return code[start:end]
@@ -76,9 +75,7 @@ class CodeGenerator:
         p[0].code += p_type + p[1].value + p[2] + p[3].replacement() + ";"
         p[0].value = p[1].value
         if p[3].value != "":
-            p[0].iddec_assigns.update({
-                p[0].value : p[3].value
-            })
+            p[0].iddec_assigns.update({p[0].value: p[3].value})
 
     @staticmethod
     def simple_simple(p, ret=""):
@@ -88,34 +85,30 @@ class CodeGenerator:
         else:
             p[0].code = p[1] + " 0" + p[3]
 
-
     @staticmethod
     def if_(p):
         p[0] = NonTerminal()
         p[0].code = p[3].code
         extra = p[3].relop_parts
+        last_label = CodeGenerator.last_label(p[5])
+
         for _ in range(len(extra)):
             p[0].code += "if (" + extra.pop() + ")"
-        
-        last_label = CodeGenerator.last_label(p[5])
-        if last_label:
-            p[0].code += "goto " + last_label + ";"
-            p[0].code += p[5].code
-        else:
-            label = new_label()
-            p[0].code += "goto " + label + ";"
-            p[0].code += p[5].code
-            p[0].code += label + ": "
+            label = ""
+            if last_label:
+                p[0].code += "goto " + last_label + ";"
+            else:
+                label = new_label()
+                p[0].code += "goto " + label + ";"
+                last_label = label
+
+        p[0].code += p[5].code
+        p[0].code += last_label + ": "
 
     @staticmethod
     def if_with_else(p):
         CodeGenerator.if_(p)
-        p[0].code += (
-            " "
-            + p[6].code
-            + " else "
-            + p[8].code
-        )
+        p[0].code += " " + p[6].code + " " + p[8].code
 
     @staticmethod
     def c_type_for(p):
@@ -146,6 +139,16 @@ class CodeGenerator:
         p[0] = NonTerminal()
         p[0].in_place = p[3].replacement()
         # update_output_table(temp, "int")
-        p[0].relop_parts = [p[1].bool_replacement() + " " + CodeGenerator.inverse_relop(p[2]) + " "  +  p[3].replacement() ] + p[1].relop_parts + p[3].relop_parts
-        # p[0].value = 
-        p[0].code = p[1].code + p[3].code #+ temp + " = " + p[0].value + ";"
+        p[0].relop_parts = (
+            [
+                p[1].bool_replacement()
+                + " "
+                + CodeGenerator.inverse_relop(p[2])
+                + " "
+                + p[3].replacement()
+            ]
+            + p[1].relop_parts
+            + p[3].relop_parts
+        )
+        # p[0].value =
+        p[0].code = p[1].code + p[3].code  # + temp + " = " + p[0].value + ";"
