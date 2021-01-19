@@ -457,7 +457,7 @@ def p_exp_rbracket(p):
 
 
 def p_exp_lvalue_assign(p):
-    "exp : lvalue ASSIGN exp"
+    "exp : lvalue ASSIGN exp %prec OR"
     p[0] = NonTerminal()
     if p[1].is_array:
         index, name = index_name_from_str(p[1].value)

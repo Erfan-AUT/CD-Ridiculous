@@ -1856,12 +1856,6 @@ state 81
     (71) operator -> . DIV
     (72) operator -> . MOD
 
-    GT              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    GE              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    LT              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    LE              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    EQ              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    NE              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     AND             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     OR              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     RRB             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
@@ -1869,23 +1863,29 @@ state 81
     RSB             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     COLON           reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     SEMICOLON       reduce using rule 63 (exp -> lvalue ASSIGN exp .)
+    GT              shift and go to state 54
+    GE              shift and go to state 55
+    LT              shift and go to state 56
+    LE              shift and go to state 57
+    EQ              shift and go to state 58
+    NE              shift and go to state 59
     SUM             shift and go to state 62
     SUB             shift and go to state 63
     MUL             shift and go to state 64
     DIV             shift and go to state 65
     MOD             shift and go to state 66
 
+  ! GT              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! GE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! LT              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! LE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! EQ              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! NE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUM             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUB             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MUL             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! DIV             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MOD             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
-  ! GT              [ shift and go to state 54 ]
-  ! GE              [ shift and go to state 55 ]
-  ! LT              [ shift and go to state 56 ]
-  ! LE              [ shift and go to state 57 ]
-  ! EQ              [ shift and go to state 58 ]
-  ! NE              [ shift and go to state 59 ]
   ! AND             [ shift and go to state 60 ]
   ! OR              [ shift and go to state 61 ]
 
@@ -2739,33 +2739,33 @@ state 119
     (72) operator -> . MOD
 
     SEMICOLON       reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    GT              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    GE              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    LT              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    LE              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    EQ              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    NE              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     AND             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     OR              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     COLON           reduce using rule 12 (iddec -> lvalue ASSIGN exp .)
     COMMA           reduce using rule 12 (iddec -> lvalue ASSIGN exp .)
+    GT              shift and go to state 54
+    GE              shift and go to state 55
+    LT              shift and go to state 56
+    LE              shift and go to state 57
+    EQ              shift and go to state 58
+    NE              shift and go to state 59
     SUM             shift and go to state 62
     SUB             shift and go to state 63
     MUL             shift and go to state 64
     DIV             shift and go to state 65
     MOD             shift and go to state 66
 
+  ! GT              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! GE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! LT              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! LE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! EQ              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! NE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUM             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUB             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MUL             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! DIV             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MOD             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
-  ! GT              [ shift and go to state 54 ]
-  ! GE              [ shift and go to state 55 ]
-  ! LT              [ shift and go to state 56 ]
-  ! LE              [ shift and go to state 57 ]
-  ! EQ              [ shift and go to state 58 ]
-  ! NE              [ shift and go to state 59 ]
   ! AND             [ shift and go to state 60 ]
   ! OR              [ shift and go to state 61 ]
 
