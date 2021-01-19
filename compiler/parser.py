@@ -30,6 +30,7 @@ def p_program(p):
         p[0].code = "int " + ",".join(list_variables()) + ";"
     for key, value in p[1].iddec_assigns.items():
         p[5].code = key + "=" + str(value) + ";" + p[5].code
+    p[5].code = p[1].code + p[5].code
     p[5].code = "{" + p[5].code + "}"
     p[0].code += "int main()" + p[5].code
     with open("tests/code_gen/out1.c", "w") as text_file:
@@ -39,15 +40,15 @@ def p_program(p):
 def p_declist_mult(p):
     "declist : declist dec"
     p[0] = NonTerminal()
-    p[0].code = p[2].code
+    p[0].code += p[2].code
     p[0].iddec_assigns = {**p[1].iddec_assigns, **p[2].iddec_assigns}
     # p[0].iddec_assigns = p[1].iddec_assigns + p[2].iddec_assigns
     try:
-        p[0] += " " + p[1].code
+        p[0].code += " " + p[1].code
     except:
         pass
     if DEBUG:
-        print("p_declist" + " : " + p[0].code)
+        print("p_declist_mult" + " : " + p[0].code)
 
 def p_declist(p):
     """declist : eps"""
@@ -73,6 +74,7 @@ def p_vardec(p):
         if not symbol.startswith("array["):
             update_symbols(symbol, p_type)
     # p[0].code = p_type + " " + p[1].replacement() + p[4]
+    p[0].code += p[1].code
     if PRINT_CODE:
         print(p[0].code)
     if DEBUG:
@@ -103,6 +105,8 @@ def p_iddec(p):
     p[0] = NonTerminal()
     if not p[1].is_array:
         CodeGenerator.assign_lvalue(p)
+    else:
+        p[0].code += p[1].code + p[3].code
     p[0].is_array = p[1].is_array
     if DEBUG:
         print("p_iddec" + " : " + p[0].code)
@@ -124,7 +128,8 @@ def p_idlist(p):
     p[0].iddec_assigns = {**p[1].iddec_assigns, **p[3].iddec_assigns}
     if not p[3].is_array:
         p[0].in_place += p[2] + p[3].replacement()
-    p[0].code = p[0].in_place
+    p[0].code += p[1].code + p[3].code
+    # p[0].code += p[0].in_place
     if DEBUG:
         print("p_idlist" + " : " + p[0].code)
     
