@@ -8,6 +8,6 @@ int main()
         goto L0;
     if (array[T1] > array[T2])
         goto L0;
-    y = 0;
+    y = 1;
 L0:
 }

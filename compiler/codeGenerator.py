@@ -57,17 +57,17 @@ class CodeGenerator:
         CodeGenerator.arith_basics(p, temp)
         # TODO: This place is prone to forward duplicate labels, fix it!
         l1, label = new_label(), ""
-        for item in p[1].relop_parts[::-1]:
+        for item in p[1].relop_parts:
             p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
 
         if (p[2] == "and"):
             label = l1
-            for item in p[3].relop_parts[::-1]:
+            for item in p[3].relop_parts:
                 p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
         else:
             label = new_label()
             p[0].code += l1 + ": "
-            for item in p[3].relop_parts[::-1]:
+            for item in p[3].relop_parts:
                 p[0].code += "if (" + item + ")" + "goto " + label + ";"
 
         p[0].code += label + ": "
@@ -158,7 +158,7 @@ class CodeGenerator:
         l1, l2, last_label = CodeGenerator.loop_labels(p[9])
         p[0].code += l1 + ": "
         # CodeGenerator.strip_brackets(p[9])
-        p[5].value = ";".join(p[5].relop_parts[::-1]).strip()
+        p[5].value = ";".join(p[5].relop_parts).strip()
         p[0].code += "if (" + p[5].value + ")" + "goto " + l2 + ";"
         p[0].code += p[9].code + p[7].code
         p[0].code += "goto " + l1 + ";"
@@ -204,7 +204,7 @@ class CodeGenerator:
             p[0].code += p[1].code + p[3].code
             p[0].code += p[1].value + "= 0;"
             label = new_label()
-            for item in p[3].relop_parts[::-1]:
+            for item in p[3].relop_parts:
                 p[0].code += "if (" + item + ")" + "goto " + label + ";"
             p[0].code += p[1].value + "= 1;"
             p[0].code += label + ": "
