@@ -10,6 +10,7 @@ from .tables import (
     update_output_table,
 )
 from .code import code
+from string import Template as StringTemplate
 
 DEBUG = True
 PRINT_CODE = False
@@ -182,6 +183,7 @@ def p_block(p):
 def p_stmtlist(p):
     "stmtlist : stmtlist stmt %prec MUL"
     p[0] = NonTerminal()
+    p[0].iddec_assigns = {**p[1].iddec_assigns, **p[2].iddec_assigns}
     try:
         p[0].code = p[1].code + " " + p[2].code
     except:
@@ -245,8 +247,9 @@ def p_cases(p):
 
 def p_cases_empty(p):
     "cases : eps"
+    p[0] = NonTerminal()
     if DEBUG:
-        print("p_cases_empty" + " : " + p[0].code)
+        print("p_cases_empty")
 
 
 def p_stmt(p):
@@ -354,7 +357,8 @@ def p_simple(p):
 def p_simple_switch(p):
     "simple :  ON LRB exp RRB LCB cases RCB SEMICOLON"
     p[0] = NonTerminal()
-    p[0].code = "switch (" + p[3].value + ") {" + p[6].code + "}"
+    cases = StringTemplate(p[6].code)
+    p[0].code += cases.substitute(cond=p[3].value)
     if DEBUG:
         print("p_simple_switch" + " : " + p[0].code)
 

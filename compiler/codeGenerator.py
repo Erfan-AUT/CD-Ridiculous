@@ -4,8 +4,9 @@ from .tables import (
     update_output_table,
     index_name_from_str,
     get_array_index,
-    get_array_size
+    get_array_size,
 )
+
 
 # TODO: Do we need to check if there are labels before the one we're putting?
 
@@ -176,14 +177,15 @@ class CodeGenerator:
         l1, l2, last_label = CodeGenerator.loop_labels(p[7])
         p[0].code += iterator + "=" + str(array_start_index) + ";"
         p[0].code += l1 + ": "
-        p[0].code += "if (" + iterator + "<" + str(last_index) + ")" + "goto " + l2 + ";"
+        p[0].code += (
+            "if (" + iterator + "<" + str(last_index) + ")" + "goto " + l2 + ";"
+        )
         p[0].code += item + "=" + "array[" + iterator + "];"
         p[0].code += p[7].code
         p[0].code += iterator + "=" + iterator + "+" "1" + ";"
-        p[0].code += "goto " + l1 + ";" 
+        p[0].code += "goto " + l1 + ";"
         if l2 != last_label:
             p[0].code += l2 + ": "
-
 
     @staticmethod
     def while_(p):
@@ -253,4 +255,17 @@ class CodeGenerator:
     @staticmethod
     def case(p):
         p[0] = NonTerminal()
-        p[0].code += 
+        last_label = CodeGenerator.last_label(p[4])
+        l1 = new_label()
+        p[0].code += "if ( $cond != " + str(p[2].value) + ")"
+        if not last_label:
+            last_label = l1
+        p[0].code += "goto " + last_label + ";"
+        p[0].code += p[4].code
+        for key, value in p[4].iddec_assigns.items():
+            p[0].code += key + "=" + str(value) + ";"
+        if last_label == l1:
+            p[0].code += l1 + ": "
+
+
+

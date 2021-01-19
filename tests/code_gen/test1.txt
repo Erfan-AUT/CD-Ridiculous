@@ -1,13 +1,12 @@
-x[10]:int;
-i = 0,j = 0:int;
+
 main()
 {
-    for(i = 0;i < 10 ;i = i + 1)
-        for(j = i + 1;j < 10 ;j = j + 1)
-            if(x[i] < x[j])
-            {
-                swapper = x[i]:int;
-                x[i] = x[j];
-                x[j] = swapper;
-            }
+    on(x1) {
+        where 1:
+            y = 1;
+        where 2:
+            y = 2;
+        where 3:
+            y = x[y+1];
+    };
 }
