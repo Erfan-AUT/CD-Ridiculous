@@ -104,6 +104,7 @@ def p_iddec(p):
     """iddec : lvalue ASSIGN exp"""
     p[0] = NonTerminal()
     if not p[1].is_array:
+        p[0].code += p[1].code
         CodeGenerator.assign_lvalue(p)
     else:
         p[0].code += p[1].code + p[3].code

@@ -7,8 +7,8 @@ int main()
 L0:
     if (i >= 10)
         goto L1;
-    T3 = T2 + 0;
     T2 = i + 0;
+    T3 = T2 + 0;
     array[T3] = i;
     T1 = i + 1;
     i = T1;
