@@ -57,7 +57,6 @@ class CodeGenerator:
         CodeGenerator.arith_basics(p, temp)
         # TODO: This place is prone to forward duplicate labels, fix it!
         l1, label = new_label(), ""
-        p[0].code += p[1].code + p[3].code
         for item in p[1].relop_parts:
             p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
 
@@ -202,9 +201,13 @@ class CodeGenerator:
             p[0].code += p[1].value + "= 1;"
             p[0].code += p[3].code[last_semi:]
         elif p[3].relop_parts:
-            p[1] = NonTerminal()
-            p[2] = "and"
-            CodeGenerator.bool_arithmetic(p, new_temp())
+            p[0].code += p[1].code + p[3].code
+            p[0].code += p[1].value + "= 0;"
+            label = new_label()
+            for item in p[3].relop_parts:
+                p[0].code += "if (" + item + ")" + "goto " + label + ";"
+            p[0].code += p[1].value + "= 1;"
+            p[0].code += label + ": "
         else:
             CodeGenerator.assign_lvalue(p)
 
