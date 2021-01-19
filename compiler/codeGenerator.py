@@ -111,7 +111,7 @@ class CodeGenerator:
         #TODO: Handle boolean assignments
         p[0].code += p[1].code + p[3].code
         p[0].value = p[1].value
-        if p[3].value != "":
+        if p[3].value != "" and not p[1].is_array:
             p[0].iddec_assigns.update({p[0].value: p[3].value})
         else:
             p[0].code += p[1].value + "=" + p[3].replacement() + ";"

@@ -3,5 +3,5 @@ i = 0,j = 0:int;
 main()
 {
      for(i = 0;i < 10 ;i = i + 1)
-        x[i] = (i * i) % 15;
+        x[i] = i;
 }
