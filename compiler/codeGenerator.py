@@ -166,10 +166,14 @@ class CodeGenerator:
         if p[3].relop_parts:
             # TODO: This place is prone to forward duplicate labels, fix it!
             label = new_label()
+            p[0].code += p[1].code + "=0;" 
             for item in p[3].relop_parts:
                 p[0].code += "if (" + item + ")" + "goto " + label + ";"
-        CodeGenerator.assign_lvalue(p)
-        p[0].code += label + ": "
+            p[0].code += p[1].code + "=1;"
+            p[0].code += label + ": "
+            
+        else:
+            CodeGenerator.assign_lvalue(p)
 
     @staticmethod
     def boolean(p):
