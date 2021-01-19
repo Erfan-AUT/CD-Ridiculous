@@ -1,3 +1,3 @@
  main() {
-     j = x[i] <= x[i + 1];
+      j = y <= z or z >= y;
  }

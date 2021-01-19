@@ -1411,12 +1411,6 @@ state 68
     (71) operator -> . DIV
     (72) operator -> . MOD
 
-    GT              reduce using rule 60 (exp -> SUB exp .)
-    GE              reduce using rule 60 (exp -> SUB exp .)
-    LT              reduce using rule 60 (exp -> SUB exp .)
-    LE              reduce using rule 60 (exp -> SUB exp .)
-    EQ              reduce using rule 60 (exp -> SUB exp .)
-    NE              reduce using rule 60 (exp -> SUB exp .)
     AND             reduce using rule 60 (exp -> SUB exp .)
     OR              reduce using rule 60 (exp -> SUB exp .)
     SUM             reduce using rule 60 (exp -> SUB exp .)
@@ -1426,19 +1420,25 @@ state 68
     RSB             reduce using rule 60 (exp -> SUB exp .)
     COLON           reduce using rule 60 (exp -> SUB exp .)
     SEMICOLON       reduce using rule 60 (exp -> SUB exp .)
+    GT              shift and go to state 54
+    GE              shift and go to state 55
+    LT              shift and go to state 56
+    LE              shift and go to state 57
+    EQ              shift and go to state 58
+    NE              shift and go to state 59
     MUL             shift and go to state 64
     DIV             shift and go to state 65
     MOD             shift and go to state 66
 
+  ! GT              [ reduce using rule 60 (exp -> SUB exp .) ]
+  ! GE              [ reduce using rule 60 (exp -> SUB exp .) ]
+  ! LT              [ reduce using rule 60 (exp -> SUB exp .) ]
+  ! LE              [ reduce using rule 60 (exp -> SUB exp .) ]
+  ! EQ              [ reduce using rule 60 (exp -> SUB exp .) ]
+  ! NE              [ reduce using rule 60 (exp -> SUB exp .) ]
   ! MUL             [ reduce using rule 60 (exp -> SUB exp .) ]
   ! DIV             [ reduce using rule 60 (exp -> SUB exp .) ]
   ! MOD             [ reduce using rule 60 (exp -> SUB exp .) ]
-  ! GT              [ shift and go to state 54 ]
-  ! GE              [ shift and go to state 55 ]
-  ! LT              [ shift and go to state 56 ]
-  ! LE              [ shift and go to state 57 ]
-  ! EQ              [ shift and go to state 58 ]
-  ! NE              [ shift and go to state 59 ]
   ! AND             [ shift and go to state 60 ]
   ! OR              [ shift and go to state 61 ]
   ! SUM             [ shift and go to state 62 ]
@@ -1746,12 +1746,6 @@ state 79
     (71) operator -> . DIV
     (72) operator -> . MOD
 
-    GT              reduce using rule 58 (exp -> exp relop exp .)
-    GE              reduce using rule 58 (exp -> exp relop exp .)
-    LT              reduce using rule 58 (exp -> exp relop exp .)
-    LE              reduce using rule 58 (exp -> exp relop exp .)
-    EQ              reduce using rule 58 (exp -> exp relop exp .)
-    NE              reduce using rule 58 (exp -> exp relop exp .)
     AND             reduce using rule 58 (exp -> exp relop exp .)
     OR              reduce using rule 58 (exp -> exp relop exp .)
     SUM             reduce using rule 58 (exp -> exp relop exp .)
@@ -1764,13 +1758,19 @@ state 79
     RSB             reduce using rule 58 (exp -> exp relop exp .)
     COLON           reduce using rule 58 (exp -> exp relop exp .)
     SEMICOLON       reduce using rule 58 (exp -> exp relop exp .)
+    GT              shift and go to state 54
+    GE              shift and go to state 55
+    LT              shift and go to state 56
+    LE              shift and go to state 57
+    EQ              shift and go to state 58
+    NE              shift and go to state 59
 
-  ! GT              [ shift and go to state 54 ]
-  ! GE              [ shift and go to state 55 ]
-  ! LT              [ shift and go to state 56 ]
-  ! LE              [ shift and go to state 57 ]
-  ! EQ              [ shift and go to state 58 ]
-  ! NE              [ shift and go to state 59 ]
+  ! GT              [ reduce using rule 58 (exp -> exp relop exp .) ]
+  ! GE              [ reduce using rule 58 (exp -> exp relop exp .) ]
+  ! LT              [ reduce using rule 58 (exp -> exp relop exp .) ]
+  ! LE              [ reduce using rule 58 (exp -> exp relop exp .) ]
+  ! EQ              [ reduce using rule 58 (exp -> exp relop exp .) ]
+  ! NE              [ reduce using rule 58 (exp -> exp relop exp .) ]
   ! AND             [ shift and go to state 60 ]
   ! OR              [ shift and go to state 61 ]
   ! SUM             [ shift and go to state 62 ]
@@ -1801,38 +1801,38 @@ state 80
     (71) operator -> . DIV
     (72) operator -> . MOD
 
-    GT              reduce using rule 65 (exp -> exp operator exp .)
-    GE              reduce using rule 65 (exp -> exp operator exp .)
-    LT              reduce using rule 65 (exp -> exp operator exp .)
-    LE              reduce using rule 65 (exp -> exp operator exp .)
-    EQ              reduce using rule 65 (exp -> exp operator exp .)
-    NE              reduce using rule 65 (exp -> exp operator exp .)
     AND             reduce using rule 65 (exp -> exp operator exp .)
     OR              reduce using rule 65 (exp -> exp operator exp .)
     SUM             reduce using rule 65 (exp -> exp operator exp .)
     SUB             reduce using rule 65 (exp -> exp operator exp .)
-    MUL             reduce using rule 65 (exp -> exp operator exp .)
-    DIV             reduce using rule 65 (exp -> exp operator exp .)
-    MOD             reduce using rule 65 (exp -> exp operator exp .)
     RRB             reduce using rule 65 (exp -> exp operator exp .)
     COMMA           reduce using rule 65 (exp -> exp operator exp .)
     RSB             reduce using rule 65 (exp -> exp operator exp .)
     COLON           reduce using rule 65 (exp -> exp operator exp .)
     SEMICOLON       reduce using rule 65 (exp -> exp operator exp .)
+    GT              shift and go to state 54
+    GE              shift and go to state 55
+    LT              shift and go to state 56
+    LE              shift and go to state 57
+    EQ              shift and go to state 58
+    NE              shift and go to state 59
+    MUL             shift and go to state 64
+    DIV             shift and go to state 65
+    MOD             shift and go to state 66
 
-  ! GT              [ shift and go to state 54 ]
-  ! GE              [ shift and go to state 55 ]
-  ! LT              [ shift and go to state 56 ]
-  ! LE              [ shift and go to state 57 ]
-  ! EQ              [ shift and go to state 58 ]
-  ! NE              [ shift and go to state 59 ]
+  ! GT              [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! GE              [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! LT              [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! LE              [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! EQ              [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! NE              [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! MUL             [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! DIV             [ reduce using rule 65 (exp -> exp operator exp .) ]
+  ! MOD             [ reduce using rule 65 (exp -> exp operator exp .) ]
   ! AND             [ shift and go to state 60 ]
   ! OR              [ shift and go to state 61 ]
   ! SUM             [ shift and go to state 62 ]
   ! SUB             [ shift and go to state 63 ]
-  ! MUL             [ shift and go to state 64 ]
-  ! DIV             [ shift and go to state 65 ]
-  ! MOD             [ shift and go to state 66 ]
 
     operator                       shift and go to state 53
     relop                          shift and go to state 52
@@ -1856,8 +1856,6 @@ state 81
     (71) operator -> . DIV
     (72) operator -> . MOD
 
-    AND             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    OR              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     RRB             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     COMMA           reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     RSB             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
@@ -1869,6 +1867,8 @@ state 81
     LE              shift and go to state 57
     EQ              shift and go to state 58
     NE              shift and go to state 59
+    AND             shift and go to state 60
+    OR              shift and go to state 61
     SUM             shift and go to state 62
     SUB             shift and go to state 63
     MUL             shift and go to state 64
@@ -1881,13 +1881,13 @@ state 81
   ! LE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! EQ              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! NE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! AND             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! OR              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUM             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUB             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MUL             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! DIV             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MOD             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
-  ! AND             [ shift and go to state 60 ]
-  ! OR              [ shift and go to state 61 ]
 
     relop                          shift and go to state 52
     operator                       shift and go to state 53
@@ -2739,8 +2739,6 @@ state 119
     (72) operator -> . MOD
 
     SEMICOLON       reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    AND             reduce using rule 63 (exp -> lvalue ASSIGN exp .)
-    OR              reduce using rule 63 (exp -> lvalue ASSIGN exp .)
     COLON           reduce using rule 12 (iddec -> lvalue ASSIGN exp .)
     COMMA           reduce using rule 12 (iddec -> lvalue ASSIGN exp .)
     GT              shift and go to state 54
@@ -2749,6 +2747,8 @@ state 119
     LE              shift and go to state 57
     EQ              shift and go to state 58
     NE              shift and go to state 59
+    AND             shift and go to state 60
+    OR              shift and go to state 61
     SUM             shift and go to state 62
     SUB             shift and go to state 63
     MUL             shift and go to state 64
@@ -2761,13 +2761,13 @@ state 119
   ! LE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! EQ              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! NE              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! AND             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
+  ! OR              [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUM             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! SUB             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MUL             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! DIV             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
   ! MOD             [ reduce using rule 63 (exp -> lvalue ASSIGN exp .) ]
-  ! AND             [ shift and go to state 60 ]
-  ! OR              [ shift and go to state 61 ]
 
     relop                          shift and go to state 52
     operator                       shift and go to state 53

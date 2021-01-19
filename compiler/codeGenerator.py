@@ -52,6 +52,8 @@ class CodeGenerator:
             p[0].code += p[1].code
         if ";" in p[3].code:
             p[0].code += p[3].code
+        if p[2] == "||":
+            c = 1
         p[0].code += (
             p[0].in_place
             + " = "
@@ -182,6 +184,7 @@ class CodeGenerator:
     @staticmethod
     def boolean(p):
         p[0] = NonTerminal()
+        # The right-most value for a series of boolean conditions
         p[0].in_place = p[3].replacement()
         p[0].relop_parts = (
             [
