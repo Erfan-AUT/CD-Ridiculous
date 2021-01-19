@@ -1754,22 +1754,17 @@ state 79
     NE              reduce using rule 58 (exp -> exp relop exp .)
     AND             reduce using rule 58 (exp -> exp relop exp .)
     OR              reduce using rule 58 (exp -> exp relop exp .)
+    SUM             reduce using rule 58 (exp -> exp relop exp .)
+    SUB             reduce using rule 58 (exp -> exp relop exp .)
+    MUL             reduce using rule 58 (exp -> exp relop exp .)
+    DIV             reduce using rule 58 (exp -> exp relop exp .)
+    MOD             reduce using rule 58 (exp -> exp relop exp .)
     RRB             reduce using rule 58 (exp -> exp relop exp .)
     COMMA           reduce using rule 58 (exp -> exp relop exp .)
     RSB             reduce using rule 58 (exp -> exp relop exp .)
     COLON           reduce using rule 58 (exp -> exp relop exp .)
     SEMICOLON       reduce using rule 58 (exp -> exp relop exp .)
-    SUM             shift and go to state 62
-    SUB             shift and go to state 63
-    MUL             shift and go to state 64
-    DIV             shift and go to state 65
-    MOD             shift and go to state 66
 
-  ! SUM             [ reduce using rule 58 (exp -> exp relop exp .) ]
-  ! SUB             [ reduce using rule 58 (exp -> exp relop exp .) ]
-  ! MUL             [ reduce using rule 58 (exp -> exp relop exp .) ]
-  ! DIV             [ reduce using rule 58 (exp -> exp relop exp .) ]
-  ! MOD             [ reduce using rule 58 (exp -> exp relop exp .) ]
   ! GT              [ shift and go to state 54 ]
   ! GE              [ shift and go to state 55 ]
   ! LT              [ shift and go to state 56 ]
@@ -1778,6 +1773,11 @@ state 79
   ! NE              [ shift and go to state 59 ]
   ! AND             [ shift and go to state 60 ]
   ! OR              [ shift and go to state 61 ]
+  ! SUM             [ shift and go to state 62 ]
+  ! SUB             [ shift and go to state 63 ]
+  ! MUL             [ shift and go to state 64 ]
+  ! DIV             [ shift and go to state 65 ]
+  ! MOD             [ shift and go to state 66 ]
 
     relop                          shift and go to state 52
     operator                       shift and go to state 53

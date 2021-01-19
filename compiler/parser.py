@@ -405,7 +405,7 @@ def p_relop(p):
 
 
 def p_exp_relop(p):
-    """exp : exp relop exp %prec LT"""
+    """exp : exp relop exp %prec MUL"""
     CodeGenerator.boolean(p)
     if DEBUG:
         print("p_exp_relop")
