@@ -25,7 +25,7 @@ class NonTerminal:
         self.iddec_assigns = {}
 
     def replacement(self):
-        return str(self.value if self.value else self.in_place)
+        return str(self.value if self.value != "" else self.in_place)
 
     def bool_replacement(self):
         return str(self.value.split()[-1]) if self.value else self.in_place

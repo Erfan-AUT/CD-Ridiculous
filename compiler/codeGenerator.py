@@ -1,14 +1,16 @@
 from .nonTerminal import NonTerminal, new_temp, new_label
 from .tables import explicit_type, update_output_table
 
+# TODO: Do we need to check if there are labels before the one we're putting?
 
 class CodeGenerator:
 
     @staticmethod
     def strip_brackets(p):
-            # Remove trailing whitespace and brackets
+        # Remove trailing whitespace and brackets
         p.code = p.code.strip()
-        p.code = p.code[1:-1]
+        if p.code[0] == "{" and p.code[-1] == "}":
+            p.code = p.code[1:-1]
 
     @staticmethod
     def inverse_relop(rp):
@@ -73,15 +75,24 @@ class CodeGenerator:
     def assign_explicit_type(p):
         pass
 
+    @staticmethod 
+    def loop_labels(inside):
+        last_label = CodeGenerator.last_label(inside)
+        l1, l2 = new_label(), ""
+        if last_label:
+            l2 = last_label
+        else:
+            l2 = new_label()
+        return l1, l2, last_label
+
     @staticmethod
     def assign_lvalue(p):
-        p[0] = NonTerminal()
         p_type = str(explicit_type(p[1])) + " "
         if p_type:
             p_type = ""
         else:
             p_type = p[1].implicit_type + " "
-        p[0].code = p[3].code
+        p[0].code += p[3].code
         p[0].code += p_type + p[1].value + p[2] + p[3].replacement() + ";"
         p[0].value = p[1].value
         if p[3].value != "":
@@ -125,9 +136,16 @@ class CodeGenerator:
     @staticmethod
     def c_type_for(p):
         p[0] = NonTerminal()
-        p[0].code += p[3].value
-        p[0].code += "if (" + p[7].value + ")"
-        p[0].code += p[9].code + p[5].code
+        p[0].code += p[3].code
+        l1, l2, last_label = CodeGenerator.loop_labels(p[9])
+        p[0].code += l1 + ": "
+        CodeGenerator.strip_brackets(p[9])
+        p[5].value = ";".join(p[5].relop_parts).strip()
+        p[0].code += "if (" + p[5].value + ")" + "goto " + l2 + ";"
+        p[0].code += p[9].code + p[7].code
+        p[0].code += "goto " + l1 + ";"
+        if l2 != last_label:
+            p[0].code += l2 + ": "
         # p[0].code = (
         #     "for ("
         #     + p[3].value
@@ -147,12 +165,7 @@ class CodeGenerator:
     @staticmethod
     def while_(p):
         p[0] = NonTerminal()
-        last_label = CodeGenerator.last_label(p[5])
-        l1, l2 = new_label(), ""
-        if last_label:
-            l2 = last_label
-        else:
-            l2 = new_label()
+        l1, l2, last_label = CodeGenerator.loop_labels(p[5])
         p[0].code += l1 + ": "
         CodeGenerator.strip_brackets(p[5])
         p[3].value = CodeGenerator.inverse_relop(p[3].value)

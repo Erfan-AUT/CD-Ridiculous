@@ -2,7 +2,7 @@ from ply.yacc import yacc
 from .lex import tokens
 from .nonTerminal import NonTerminal, new_temp
 from .codeGenerator import CodeGenerator
-from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str, list_variables
+from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str, list_variables, update_output_table
 from .code import code
 
 DEBUG = True
@@ -25,7 +25,9 @@ def p_program(p):
     if DEBUG:
         print("p_program")
     p[0] = NonTerminal()
-    p[0].code = "int " + ",".join(list_variables()) + ";"
+    vars = list_variables()
+    if len(vars) > 0:
+        p[0].code = "int " + ",".join(list_variables()) + ";"
     CodeGenerator.strip_brackets(p[5])
     for key, value in p[1].iddec_assigns.items():
         p[5].code = key + "=" + str(value) + ";" + p[5].code
@@ -69,7 +71,8 @@ def p_vardec(p):
     p[0].iddec_assigns = p[1].iddec_assigns
     p_type = p[3]
     for symbol in p[1].replacement().split(","):
-        update_symbols(symbol, p_type)
+        if not symbol.startswith("array["):
+            update_symbols(symbol, p_type)
     # p[0].code = p_type + " " + p[1].replacement() + p[4]
     if PRINT_CODE:
         print(p[0].code)
@@ -98,6 +101,7 @@ def p_type(p):
 
 def p_iddec(p):
     """iddec : lvalue ASSIGN exp"""
+    p[0] = NonTerminal()
     if not p[1].is_array:
         CodeGenerator.assign_lvalue(p)
     p[0].is_array = p[1].is_array
@@ -454,11 +458,14 @@ def p_exp_rbracket(p):
 
 def p_exp_lvalue_assign(p):
     "exp : lvalue ASSIGN exp"
+    p[0] = NonTerminal()
     if p[1].is_array:
         index, name = index_name_from_str(p[1].value)
         init_index = get_array_index(name)
-        index += init_index
-        p[1].value = "array[" + str(index) + "]"
+        new_index = new_temp()
+        update_output_table(new_index, "int")
+        p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
+        p[1].value = "array[" + new_index + "]"
     CodeGenerator.assign_lvalue(p)
     if DEBUG:
         print("p_exp_lvalue_assign")
