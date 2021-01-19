@@ -230,14 +230,15 @@ def p_lvalue_array(p):
 
 def p_case(p):
     "case : WHERE const COLON stmtlist"
-    p[0].value = p[2]
-    p[0].code = p[4].code
+    CodeGenerator.case(p)
     if DEBUG:
         print("p_case" + " : " + p[0].code)
 
 
 def p_cases(p):
     "cases : cases case"
+    p[0] = NonTerminal()
+    p[0].code += p[1].code + p[2].code
     if DEBUG:
         print("p_cases" + " : " + p[0].code)
 

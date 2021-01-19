@@ -245,3 +245,12 @@ class CodeGenerator:
         )
         # p[0].value =
         p[0].code = p[1].code + p[3].code  # + temp + " = " + p[0].value + ";"
+
+    @staticmethod
+    def switch(p):
+        pass
+
+    @staticmethod
+    def case(p):
+        p[0] = NonTerminal()
+        p[0].code += 
