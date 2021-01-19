@@ -1,5 +1,5 @@
 from .nonTerminal import NonTerminal, new_temp, new_label
-from .tables import explicit_type, update_output_table
+from .tables import explicit_type, update_output_table, index_name_from_str, get_array_index
 
 # TODO: Do we need to check if there are labels before the one we're putting?
 
@@ -131,6 +131,7 @@ class CodeGenerator:
 
     @staticmethod
     def c_type_for(p):
+        ##TODO: Nested For?
         p[0] = NonTerminal()
         p[0].code += p[3].code
         l1, l2, last_label = CodeGenerator.loop_labels(p[9])
@@ -142,16 +143,6 @@ class CodeGenerator:
         p[0].code += "goto " + l1 + ";"
         if l2 != last_label:
             p[0].code += l2 + ": "
-        # p[0].code = (
-        #     "for ("
-        #     + p[3].value
-        #     + ";"
-        #     + p[5].value
-        #     + ";"
-        #     + p[7].value
-        #     + ") "
-        #     + p[9].code
-        # )
 
     @staticmethod
     def python_type_for(p):
@@ -170,6 +161,25 @@ class CodeGenerator:
         p[0].code += "goto " + l1 + ";"
         if l2 != last_label:
             p[0].code += l2 + ": "
+
+    @staticmethod
+    def p_exp_lvalue_assign(p):
+        p[0] = NonTerminal()
+        if p[1].is_array:
+            index, name = index_name_from_str(p[1].value)
+            init_index = get_array_index(name)
+            new_index = new_temp()
+            update_output_table(new_index, "int")
+            p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
+            p[1].value = "array[" + new_index + "]"
+        label = ""
+        if p[3].relop_parts:
+            # TODO: This place is prone to forward duplicate labels, fix it!
+            label = new_label()
+            for item in p[3].relop_parts:
+                p[0].code += "if (" + item + ")" + "goto " + label + ";"
+        CodeGenerator.assign_lvalue(p)
+        p[0].code += label + ": "
 
     @staticmethod
     def boolean(p):

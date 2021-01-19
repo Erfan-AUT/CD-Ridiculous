@@ -1,8 +1,8 @@
 from ply.yacc import yacc
 from .lex import tokens
-from .nonTerminal import NonTerminal, new_temp
+from .nonTerminal import NonTerminal, new_temp, new_label
 from .codeGenerator import CodeGenerator
-from .tables import explicit_type, update_symbols, get_array_index, index_name_from_str, list_variables, update_output_table
+from .tables import explicit_type, update_symbols, get_array_index, list_variables, update_output_table
 from .code import code
 
 DEBUG = True
@@ -464,15 +464,7 @@ def p_exp_rbracket(p):
 
 def p_exp_lvalue_assign(p):
     "exp : lvalue ASSIGN exp %prec OR"
-    p[0] = NonTerminal()
-    if p[1].is_array:
-        index, name = index_name_from_str(p[1].value)
-        init_index = get_array_index(name)
-        new_index = new_temp()
-        update_output_table(new_index, "int")
-        p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
-        p[1].value = "array[" + new_index + "]"
-    CodeGenerator.assign_lvalue(p)
+    CodeGenerator.p_exp_lvalue_assign(p)
     if DEBUG:
         print("p_exp_lvalue_assign")
 
