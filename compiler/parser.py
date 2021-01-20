@@ -9,6 +9,10 @@ from .tables import (
     list_variables,
     update_output_table,
     new_array,
+    assign_table_keys,
+    assign_table_val,
+    assign_table_pop,
+    assign_table
 )
 from .code import code
 from string import Template as StringTemplate
@@ -61,6 +65,18 @@ def p_declist_mult(p):
         p[0].code += " " + p[1].code
     except:
         pass
+    try:
+        p[0].code = StringTemplate(p[0].code).substitute(code="")
+    except:
+        pass
+    table = {}
+    for key, value in assign_table.items():
+        if "$" + key in p[0].code:
+            table.update( {
+                key: ""
+            })
+    p[0].code = StringTemplate(p[0].code).substitute(**table)
+
     if DEBUG:
         print("p_declist_mult" + " : " + p[0].code)
 
@@ -189,6 +205,13 @@ def p_paramdec_single(p):
 def p_block(p):
     "block : LCB stmtlist RCB"
     p[0] = p[2]
+    table = {}
+    for key, value in assign_table.items():
+        if "$" + key in p[0].code:
+            table.update( {
+                key: value
+            })
+    p[0].code = StringTemplate(p[0].code).substitute(**table)
     if DEBUG:
         print("p_block" + " : " + p[0].code)
 

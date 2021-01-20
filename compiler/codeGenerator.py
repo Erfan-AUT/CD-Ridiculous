@@ -5,6 +5,7 @@ from .tables import (
     index_name_from_str,
     get_array_index,
     get_array_size,
+    new_assign
 )
 
 from string import Template as StringTemplate
@@ -62,10 +63,15 @@ class CodeGenerator:
     def bool_arithmetic(p):
         CodeGenerator.arith_basics(p, None)
         # TODO: This place is prone to forward duplicate labels, fix it!
-        if p[1].value != "":
+        if p[1].value == 0 or p[1].value == 1:
             p[1].relop_parts += [str(1-p[1].value)]
-        if p[3].value != "":
+        elif p[1].value != "":
+            p[1].relop_parts += [p[1].value + "==0"]
+        if p[3].value == 0 or p[3].value == 1:
             p[3].relop_parts += [str(1-p[3].value)]
+        elif p[3].value != "":
+            p[3].relop_parts += [p[3].value + "==0"]
+
         l1, label = new_label(), ""
         for item in p[1].relop_parts:
             p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
@@ -133,6 +139,9 @@ class CodeGenerator:
         extra = p[3].relop_parts
         if str(p[3].value).isdigit() and not p[1].is_array:
             p[0].iddec_assigns.update({p[0].value: p[3].value})
+            assign_code = p[1].value + "=" + p[3].replacement() + ";"
+            assign_label = new_assign(assign_code)
+            p[0].code += " $" + assign_label + " " 
         elif extra:
             p[0].code += p[1].value + "= 0;"
             label = new_label()

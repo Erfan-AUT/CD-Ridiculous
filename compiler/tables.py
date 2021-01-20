@@ -63,3 +63,30 @@ def index_name_from_str(string):
     if result.isdigit():
         result = int(result)
     return result, string[0 : start - 1]
+
+##### Assign Table ####
+assign_table = {}
+
+assignCount = -1
+
+def new_assign_label():
+    global assignCount
+    assignCount += 1
+    return "assign" + str(assignCount)
+
+def new_assign(p):
+    label = new_assign_label()
+    assign_table.update({
+        label : p
+    })
+    return label
+
+def assign_table_keys():
+    return assign_table.keys()
+
+def assign_table_val(key):
+    return assign_table.get(key)
+    # return assign_table.get(key)
+
+def assign_table_pop(key):
+    assign_table.pop(key)
