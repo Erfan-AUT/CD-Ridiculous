@@ -233,10 +233,11 @@ class CodeGenerator:
     def while_(p):
         p[0] = NonTerminal()
         l1, l2, last_label = CodeGenerator.loop_labels(p[5])
+        p[0].code += p[3].code
         p[0].code += l1 + ": "
         # CodeGenerator.strip_brackets(p[5])
-        p[3].value = CodeGenerator.inverse_relop(p[3].value)
-        p[0].code += "if (" + p[3].value + ") " + "goto " + l2 + ";"
+        p[3].value = CodeGenerator.inverse_relop(p[3].replacement())
+        p[0].code += "if (" + p[3].replacement() + ") " + "goto " + l2 + ";"
         p[0].code += p[5].code
         p[0].code += "goto " + l1 + ";"
         if l2 != last_label:

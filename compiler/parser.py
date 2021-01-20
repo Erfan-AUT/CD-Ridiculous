@@ -12,7 +12,8 @@ from .tables import (
     assign_table_keys,
     assign_table_val,
     assign_table_pop,
-    assign_table
+    assign_table,
+    symbol_table
 )
 from .code import code
 from string import Template as StringTemplate
