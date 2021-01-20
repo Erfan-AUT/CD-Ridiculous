@@ -110,7 +110,7 @@ class CodeGenerator:
         # TODO: Handle boolean assignments
         p[0].code += p[3].code
         p[0].value = p[1].value
-        if p[3].value != "" and not p[1].is_array:
+        if str(p[3].value).isdigit() and not p[1].is_array:
             p[0].iddec_assigns.update({p[0].value: p[3].value})
         else:
             p[0].code += p[1].value + "=" + p[3].replacement() + ";"
@@ -211,6 +211,12 @@ class CodeGenerator:
             p[0].code += p[1].code
             p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
             p[1].value = "array[" + new_index + "]"
+
+        if p[3].is_array:
+            index, name = index_name_from_str(p[3].value)
+            init_index = get_array_index(name)
+            p[3].value = "array[" + p[3].in_place + "]"
+
 
         if p[3].bool_gen:
             p[0].code += p[1].value + "= 0;"

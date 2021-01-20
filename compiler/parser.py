@@ -8,6 +8,7 @@ from .tables import (
     get_array_index,
     list_variables,
     update_output_table,
+    new_array,
 )
 from .code import code
 from string import Template as StringTemplate
@@ -21,6 +22,7 @@ precedence = (
     ("left", "NOT"),
     ("left", "SUM", "SUB"),
     ("left", "MUL", "DIV", "MOD"),
+    ("left", "BOOLOP"),
     ("left", "LT", "LE", "GT", "GE", "EQ", "NE"),
 )
 
@@ -33,12 +35,14 @@ def p_program(p):
         print("p_program")
     p[0] = NonTerminal()
     vars = list_variables()
+    p[0].code += "#include <stdio.h> \n int array [(int)1e6];"
+    p[0].iddec_assigns = {**p[1].iddec_assigns, **p[5].iddec_assigns}
     if len(vars) > 0:
-        p[0].code = "int " + ",".join(list_variables()) + ";"
-    for key, value in p[1].iddec_assigns.items():
+        p[0].code += "int " + ",".join(list_variables()) + ";"
+    for key, value in p[0].iddec_assigns.items():
         p[5].code = key + "=" + str(value) + ";" + p[5].code
     p[5].code = p[1].code + p[5].code
-    p[5].code = "{" + p[5].code + "}"
+    p[5].code = "{" + p[5].code + "return 0;" + "}"
     p[0].code += "int main()" + p[5].code
     with open("tests/code_gen/out1.c", "w") as text_file:
         text_file.write(p[0].code)
@@ -219,12 +223,16 @@ def p_lvalue_array(p):
     index = p[3].replacement()
     name = p[1]
     init_index = get_array_index(name)
+    if init_index == -1:
+        new_array(name, int(index))
+        init_index = get_array_index(name)
     new_index = new_temp()
     update_output_table(new_index, "int")
     if ";" in p[3].code:
         p[0].code += p[3].code
     p[0].code += new_index + "=" + str(index) + "+" + str(init_index) + ";"
-    p[0].value += "array" + p[2] + new_index + p[4]
+    p[0].in_place = new_index
+    p[0].value += name + "[" + index + "]"
     p[0].is_array = True
     if DEBUG:
         print("p_lvalue_array" + " : " + p[0].code)
@@ -400,7 +408,7 @@ def p_relop(p):
 
 
 def p_exp_relop(p):
-    """exp : exp relop exp %prec MUL"""
+    """exp : exp relop exp %prec BOOLOP"""
     CodeGenerator.boolean(p)
     if DEBUG:
         print("p_exp_relop" + " : " + p[0].code)
@@ -459,27 +467,53 @@ def p_exp_const(p):
         print("p_exp_const" + " : " + p[0].code)
 
 
+def p_exp_binop_level1(p):
+    "exp : exp operator1 exp %prec MUL"
+    CodeGenerator.arithmetic(p, new_temp())
+    if DEBUG:
+        print("p_exp_binop_level_1" + " : " + p[0].code)
+
+
+def p_exp_binop_level_2(p):
+    "exp : exp operator2 exp %prec SUM"
+    CodeGenerator.arithmetic(p, new_temp())
+    if DEBUG:
+        print("p_exp_binop_level_2" + " : " + p[0].code)
+
+
 def p_exp_binop(p):
-    "exp : exp operator exp %prec SUM"
-    if p[2] == "or" or p[2] == "and":
-        CodeGenerator.bool_arithmetic(p, new_temp())
-    else:
-        CodeGenerator.arithmetic(p, new_temp())
+    "exp : exp operator3 exp %prec AND"
+    CodeGenerator.bool_arithmetic(p, new_temp())
     if DEBUG:
         print("p_exp_binop" + " : " + p[0].code)
 
 
-def p_operator(p):
-    """operator : AND
-    | OR
-    | SUM
-    | SUB
-    | MUL
+def p_operator_level_1(p):
+    """operator1 : MUL
     | DIV
-    | MOD"""
+    | MOD
+    """
     p[0] = p[1]
     if DEBUG:
-        print("p_operator" + " : " + p[0])
+        print("p_operator_level_1" + " : " + p[0])
+
+
+def p_operator_level_2(p):
+    """operator2 : SUM
+    | SUB
+    """
+    p[0] = p[1]
+    if DEBUG:
+        print("p_operator_level_2" + " : " + p[0])
+
+
+def p_operator_level_3(p):
+    """operator3 : AND
+    | OR
+    """
+    p[0] = p[1]
+    if DEBUG:
+        print("p_operator_level_3" + " : " + p[0])
 
 
 def p_const(p):

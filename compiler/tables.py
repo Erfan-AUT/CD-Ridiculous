@@ -48,13 +48,13 @@ def get_array_index(name):
     row = array_table.get(name)
     if row:
         return row[0]
-    return 0
+    return -1
 
 def get_array_size(name):
     row = array_table.get(name)
     if row:
         row[1]
-    return 1
+    return 0
 
 def index_name_from_str(string):
     start = string.find("[") + 1
