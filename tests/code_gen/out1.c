@@ -1,73 +1,60 @@
 #include <stdio.h>
 int array[(int)1e6];
-int x5, y5, x3, x2, x1, T0, T1, T2, T3, T4, T5, T6, v5, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, i1, i2, i3, T27, T28, T29, T30, T31, T32, T33;
+int b1, b2, T0, b3, b4, p1, i, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16;
 int main()
 {
-    i3 = 5;
-    i2 = 4;
-    i1 = 3;
-    T0 = 2 + 2;
-    T1 = T0 % 3;
-    x1 = T1;
-    T2 = 2 * x1;
-    x2 = T2;
-    T3 = 1 + x2;
-    x3 = T3;
-    T4 = 2 + x3;
-    y5 = T4;
-    x5 = y5;
-    printf("%d", x1);
-    printf("%d", x2);
-    printf("%d", x3);
-    printf("%d", x5);
-    printf("%d", y5);
-    T5 = 6 + 0;
-    T6 = 6 + 6;
-    T7 = 5 + 0;
-    T21 = 5 + 0;
-    T8 = 5 + 6;
-    T20 = 5 + 6;
-    T9 = 3 + 0;
-    T18 = 3 + 0;
-    T10 = 2 + 0;
-    T16 = 2 + 0;
-    T11 = 1 + 0;
-    T14 = 1 + 0;
-    T12 = 6 - 2;
-    T13 = T12 % 3;
-    array[T14] = T13;
-    T15 = 2 * array[T14];
-    array[T16] = T15;
-    T17 = 1 + array[T16];
-    array[T18] = T17;
-    T19 = 2 + array[T18];
-    array[T20] = T19;
-    array[T21] = array[T20];
-    v5 = array[T21];
-    printf("%d", v5);
-    T22 = 1 + 0;
-    x1 = array[T22];
-    T23 = 2 + 0;
-    x2 = array[T23];
-    T24 = 3 + 0;
-    x3 = array[T24];
-    T25 = 5 + 0;
-    x5 = array[T25];
-    T26 = 5 + 6;
-    y5 = array[T26];
-    printf("%d", x1);
-    printf("%d", x2);
-    printf("%d", x3);
-    printf("%d", x5);
-    printf("%d", y5);
-    T27 = i1 * i1;
-    T28 = T27 / i1;
-    T29 = i2 / 2;
-    T30 = i3 / i2;
-    T31 = i3 + T30;
-    T32 = T29 * T31;
-    T33 = T28 + T32;
-    i1 = T33;
-    printf("%d", i1);
+    if (6 >= 2)
+        goto L0;
+    if (33 != 33)
+        goto L0;
+L0:
+    b3 = ;
+    -1b2 = 3;
+    b1 = False;
+    i = 0;
+    printf("%d", b4);
+    b4 = 0;
+    T2 = 17 / 23;
+    T3 = 33 + T2;
+    b4 = 1;
+L3:
+L4:
+L6:
+L7:
+    T8 = i + 1;
+    i = T8;:  printf("%d", i);
+    T9 = i + 35;
+    i = T9;:   T10 = i + 33;
+    i = T10;
+    printf("%d", i);
+L8:
+    if (== 0)
+        goto L9;
+    T12 = i + 1;
+    i = T12;
+    goto L8;
+L9:
+    printf("%d", i);
+    if (i != 0)
+        goto L10;
+    T13 = i + 37;
+    i = T13;
+L10:
+    if (i != 1)
+        goto L11;
+    T14 = i + 32;
+    i = T14;
+L11:
+    printf("%d", i);
+L12:
+    if (p1 > 78)
+        goto L13;
+    T16 = i + 2;
+    i = T16;
+    T15 = p1 + 1;
+    p1 = T15;
+    goto L12;
+L13:
+    printf("%d", i);
     return 0;
 }
