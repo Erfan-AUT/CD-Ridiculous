@@ -37,8 +37,10 @@ def p_program(p):
     vars = list_variables()
     p[0].code += "#include <stdio.h> \n int array [(int)1e6];"
     p[0].iddec_assigns = {**p[1].iddec_assigns, **p[5].iddec_assigns}
-    if len(vars) > 0:
-        p[0].code += "int " + ",".join(list_variables()) + ";"
+    if len(vars) > 1:
+        p[0].code += "int " + ",".join(vars) + ";"
+    elif len(vars) == 1:
+        p[0].code += "int " + vars[0] + ";"
     for key, value in p[0].iddec_assigns.items():
         p[5].code = key + "=" + str(value) + ";" + p[5].code
     p[5].code = p[1].code + p[5].code
@@ -84,7 +86,7 @@ def p_vardec(p):
     p[0].iddec_assigns = p[1].iddec_assigns
     p_type = p[3]
     for symbol in p[1].replacement().split(","):
-        if not symbol.startswith("array["):
+        if not symbol.startswith("array[") and symbol:
             update_symbols(symbol, p_type)
     # p[0].code = p_type + " " + p[1].replacement() + p[4]
     p[0].code += p[1].code
@@ -113,7 +115,14 @@ def p_type(p):
 def p_iddec(p):
     """iddec : lvalue ASSIGN exp"""
     p[0] = NonTerminal()
-    if not p[1].is_array:
+    if p[3].bool_gen:
+        p[0].code += p[1].value + "= 0;"
+        last_semi = p[3].code.rfind(";") + 1
+        p[0].code += p[3].code[:last_semi]
+        p[0].code += p[1].value + "= 1;"
+        p[0].code += p[3].code[last_semi:]
+        update_symbols(p[1].value, "int")
+    elif not p[1].is_array:
         p[0].code += p[1].code
         CodeGenerator.assign_lvalue(p)
     else:
@@ -484,9 +493,9 @@ def p_exp_binop_level_2(p):
 
 def p_exp_binop(p):
     "exp : exp operator3 exp %prec AND"
-    CodeGenerator.bool_arithmetic(p, new_temp())
+    CodeGenerator.bool_arithmetic(p)
     if DEBUG:
-        print("p_exp_binop" + " : " + p[0].code)
+        print("p_exp_binop_level_3" + " : " + p[0].code)
 
 
 def p_operator_level_1(p):

@@ -1,4 +1,4 @@
-b3 = 6 < 2 and 33 == 33:bool;
+b3 = 0 and 33 == 33:bool;
 main()
 {
 

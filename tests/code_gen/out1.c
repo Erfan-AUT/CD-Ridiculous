@@ -1,13 +1,14 @@
 #include <stdio.h>
 int array[(int)1e6];
-int T0, b3;
+int b3;
 int main()
 {
-    if (6 >= 2)
+    b3 = 0;
+    if (!0)
         goto L0;
     if (33 != 33)
         goto L0;
+    b3 = 1;
 L0:
-    b3 = ;
     return 0;
 }
