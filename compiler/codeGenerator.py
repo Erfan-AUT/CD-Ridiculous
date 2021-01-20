@@ -110,8 +110,16 @@ class CodeGenerator:
         # TODO: Handle boolean assignments
         p[0].code += p[3].code
         p[0].value = p[1].value
+        extra = p[3].relop_parts
         if str(p[3].value).isdigit() and not p[1].is_array:
             p[0].iddec_assigns.update({p[0].value: p[3].value})
+        elif extra:
+            p[0].code += p[1].value + "= 0;"
+            label = new_label()
+            for item in extra:
+                p[0].code += "if (" + item + ")" + "goto " + label + ";"
+            p[0].code += p[1].value + "= 1;"
+            p[0].code += label + ": "
         else:
             p[0].code += p[1].value + "=" + p[3].replacement() + ";"
 

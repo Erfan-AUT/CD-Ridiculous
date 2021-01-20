@@ -425,7 +425,7 @@ def p_exp_minus(p):
     "exp : SUB exp"
     p[0] = NonTerminal()
     p[0].value = "-" + p[2].replacement()
-    p[0].code = p[0].value
+    # p[0].code = p[0].value
     if DEBUG:
         print("p_exp_minus" + " : " + p[0].code)
 
@@ -446,6 +446,7 @@ def p_exp_rbracket(p):
         p[0] = NonTerminal()
         p[0].in_place = p[1] + p[2].replacement() + p[3]
         p[0].code = p[0].in_place
+        p[0].relop_parts = p[2].relop_parts
     else:
         p[0] = p[2]
 
