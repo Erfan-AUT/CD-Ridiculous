@@ -481,21 +481,21 @@ def p_exp_binop_level1(p):
     "exp : exp operator1 exp %prec MUL"
     CodeGenerator.arithmetic(p, new_temp())
     if DEBUG:
-        print("p_exp_binop_level_1" + " : " + p[0].code)
+        print("p_exp_binop_mul" + " : " + p[0].code)
 
 
 def p_exp_binop_level_2(p):
     "exp : exp operator2 exp %prec SUM"
     CodeGenerator.arithmetic(p, new_temp())
     if DEBUG:
-        print("p_exp_binop_level_2" + " : " + p[0].code)
+        print("p_exp_binop_sum" + " : " + p[0].code)
 
 
 def p_exp_binop(p):
     "exp : exp operator3 exp %prec AND"
     CodeGenerator.bool_arithmetic(p)
     if DEBUG:
-        print("p_exp_binop_level_3" + " : " + p[0].code)
+        print("p_exp_binop_and" + " : " + p[0].code)
 
 
 def p_operator_level_1(p):
@@ -533,9 +533,9 @@ def p_const(p):
     | FALSE"""
     p[0] = NonTerminal()
     p[0].value = p[1]
-    if p[1] == True:
+    if str(p[1]).lower() == "true":
         p[0].value = 1
-    elif p[1] == False:
+    elif str(p[1]).lower() == "false":
         p[0].value = 0
 
     if DEBUG:

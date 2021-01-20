@@ -1,5 +1,6 @@
-b3 = 0 and 33 == 33:bool;
 main()
 {
-
+    b4 = (33 > 5) or (True and False);
+    if (b1)
+        i = 1;
 }

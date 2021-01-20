@@ -7,6 +7,8 @@ from .tables import (
     get_array_size,
 )
 
+from string import Template as StringTemplate
+
 
 # TODO: Do we need to check if there are labels before the one we're putting?
 
@@ -51,9 +53,9 @@ class CodeGenerator:
         p[0] = NonTerminal()
         if temp:
             update_output_table(temp, "int")
-        if ";" in p[1].code:
+        if ";" in p[1].code and not p[1].bool_gen:
             p[0].code += p[1].code
-        if ";" in p[3].code:
+        if ";" in p[3].code and not p[3].bool_gen:
             p[0].code += p[3].code
 
     @staticmethod
@@ -61,24 +63,37 @@ class CodeGenerator:
         CodeGenerator.arith_basics(p, None)
         # TODO: This place is prone to forward duplicate labels, fix it!
         if p[1].value != "":
-            p[1].relop_parts += ["!" + str(p[1].value)]
+            p[1].relop_parts += [str(1-p[1].value)]
         if p[3].value != "":
-            p[3].relop_parts += ["!" + str(p[3].value)]
+            p[3].relop_parts += [str(1-p[3].value)]
         l1, label = new_label(), ""
         for item in p[1].relop_parts:
             p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
+
+        if p[3].bool_gen:
+            p[3].code = StringTemplate(p[3].code).substitute(code="")
+        if p[1].bool_gen:
+            p[1].code = StringTemplate(p[1].code).substitute(code="")
 
         if p[2] == "and":
             label = l1
             for item in p[3].relop_parts:
                 p[0].code += "if (" + item + ")" + "goto " + l1 + ";"
+            p[0].code += " $code "
         else:
             label = new_label()
+            p[0].code += " $code "
             p[0].code += l1 + ": "
             for item in p[3].relop_parts:
                 p[0].code += "if (" + item + ")" + "goto " + label + ";"
-
-        p[0].code += label + ": "
+            last_semi = p[3].code.rfind(";") + 1
+            if p[3].bool_gen:
+                p[0].code += p[3].code[:last_semi]
+            p[0].code += " $code "
+            if p[3].bool_gen:
+                p[0].code += p[3].code[last_semi:]
+        if p[3].relop_parts:
+            p[0].code += label + ": "
         p[0].bool_gen = True
 
     @staticmethod
@@ -152,9 +167,14 @@ class CodeGenerator:
                 label = new_label()
                 p[0].code += "goto " + label + ";"
                 last_label = label
-
+        if (p[3].value):
+            if not last_label:
+                last_label = new_label()
+            p[0].code += "if (" + p[3].value + "== 0) goto " + last_label + ";"
         p[0].code += p[5].code
-        if not prev_label:
+        for key, value in p[5].iddec_assigns.items():
+            p[0].code += key + "=" + str(value) + ";"
+        if not prev_label and last_label:
             p[0].code += last_label + ": "
 
     @staticmethod
@@ -233,10 +253,8 @@ class CodeGenerator:
 
         if p[3].bool_gen:
             p[0].code += p[1].value + "= 0;"
-            last_semi = p[3].code.rfind(";") + 1
-            p[0].code += p[3].code[:last_semi]
-            p[0].code += p[1].value + "= 1;"
-            p[0].code += p[3].code[last_semi:]
+            replace_code = p[1].value + "=1;"
+            p[0].code += StringTemplate(p[3].code).substitute(code=replace_code)
         elif p[3].relop_parts:
             p[0].code += p[1].code + p[3].code
             p[0].code += p[1].value + "= 0;"
