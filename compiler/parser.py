@@ -25,10 +25,9 @@ precedence = (
     ("right", "ASSIGN"),
     ("left", "AND", "OR"),
     ("left", "NOT"),
+    ("left", "LT", "LE", "GT", "GE", "EQ", "NE"),
     ("left", "SUM", "SUB"),
     ("left", "MUL", "DIV", "MOD"),
-    ("left", "BOOLOP"),
-    ("left", "LT", "LE", "GT", "GE", "EQ", "NE"),
 )
 
 ############# Parser Methods ################
@@ -441,7 +440,7 @@ def p_relop(p):
 
 
 def p_exp_relop(p):
-    """exp : exp relop exp %prec BOOLOP"""
+    """exp : exp relop exp %prec LT"""
     CodeGenerator.boolean(p)
     if DEBUG:
         print("p_exp_relop" + " : " + p[0].code)

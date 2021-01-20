@@ -236,6 +236,8 @@ class CodeGenerator:
         p[0].code += p[3].code
         p[0].code += l1 + ": "
         # CodeGenerator.strip_brackets(p[5])
+        if p[3].relop_parts:
+            p[3].value = p[3].relop_parts[0]
         p[3].value = CodeGenerator.inverse_relop(p[3].replacement())
         p[0].code += "if (" + p[3].replacement() + ") " + "goto " + l2 + ";"
         p[0].code += p[5].code
